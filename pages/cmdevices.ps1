@@ -1,4 +1,4 @@
-﻿New-UDPage -Name "CM Devices" -Icon desktop -Content {
+﻿New-UDPage -Name "CMDevices" -Icon desktop -Content {
 	New-UDGrid -Title "CM Devices" -Endpoint {
         $SiteHost = $Cache:ConnectionInfo.Server
         $SiteCode = $Cache:ConnectionInfo.SiteCode

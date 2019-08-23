@@ -11,6 +11,8 @@
         Server     = $Server
         SiteCode   = $SiteCode
         Credential = $Credential
+        AppName    = "CMWT"
+        AppVersion = [string]$((Get-Module 'ud-cmwt').Version -join '.')
     }
 
     $Utilities = (Join-Path $PSScriptRoot 'ud-cminit.psm1')
