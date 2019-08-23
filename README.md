@@ -4,12 +4,13 @@ CMWT built on Universal Dashboard Community Edition
 
 ## Requirements
 
-* PowerShell module: UniversalDashboard.Community 2.5.3 or later
-* PowerShell module: dbatools
-* PowerShell module: adsips
+* PowerShell module: UniversalDashboard.Community (2.5.3 or later)
+* PowerShell module: DbaTools (1.0 or later)
+* PowerShell module: AdsiPS (1.0.0.7 or later)
 * Windows 7 or later with PowerShell 5.1 or later
-* Role access to a Configuration Manager Current Branch site (on-prem, same AD domain)
-* Role access to the SQL Server instance for the ConfigMgr site
+* Admin access to a Configuration Manager Current Branch site (on-prem, same AD domain)
+* Admin access to the SQL Server instance for the ConfigMgr site
+* Admin or User Admin access to an AzureAD tenant/subscription
 
 ## Examples
 
