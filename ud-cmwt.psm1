@@ -19,9 +19,9 @@
     Import-Module $Utilities
 
     $Pages = Get-ChildItem (Join-Path $PSScriptRoot 'pages') -Recurse -File |
-        ForEach-Object { 
+        ForEach-Object {
             Write-Verbose "loading: $($_.FullName)"
-            & $_.FullName 
+            & $_.FullName
         }
 
 #    $Endpoints = Get-ChildItem (Join-Path $PSScriptRoot 'endpoints') | ForEach-Object {
@@ -51,7 +51,7 @@
             Task Sequences
         Office 365
             Office 365 Updates
-        Windows 10 
+        Windows 10
             Servicing Plans
         Scripts
     Monitoring
@@ -111,6 +111,7 @@
         New-UDSideNavItem -Text "References" -Url "references" -Icon folder
         New-UDSideNavItem -Text "Cool Stuff" -Url "stuff" -Icon folder
         New-UDSideNavItem -Text "UD Documentation" -Url "https://docs.universaldashboard.io/" -Icon link
+        New-UDSideNavItem -Text "Send Feedback" -Url "https://github.com/Skatterbrainz/ud-cmwt/issues" -Icon comment
         New-UDSideNavItem -Text "About" -Url "About" -Icon info
     }
     $Dashboard = New-UDDashboard -Title "CMWT" -Pages $Pages -Navigation $Navigation
