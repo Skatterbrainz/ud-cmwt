@@ -6,5 +6,3 @@
             Select Name,Owner,CreateDate,DateLastModified | Out-UDGridData
     }
 }
-
-#Start-UDDashboard -Dashboard $Dashboard -Port 8082 -AutoReload

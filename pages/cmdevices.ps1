@@ -1,5 +1,5 @@
 ﻿New-UDPage -Name "CMDevices" -Icon desktop -Content {
-	New-UDGrid -Title "CM Devices" -Endpoint {
+	New-UDGrid -Title "Configuration Manager Devices" -Endpoint {
         $SiteHost = $Cache:ConnectionInfo.Server
         $SiteCode = $Cache:ConnectionInfo.SiteCode
         $query = "SELECT DISTINCT 

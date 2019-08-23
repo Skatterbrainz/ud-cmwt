@@ -40,12 +40,13 @@
         }
         New-UDSideNavItem -Text "Machines" -Icon folder -Children {
             New-UDSideNavItem -Text "CM Devices" -Url "cmdevices" -Icon desktop
-            New-UDSideNavItem -Text "CM Device Collections" -Url "cmcollections" -Icon desktop
+            New-UDSideNavItem -Text "CM Device Collections" -Url "cmdcollections" -Icon desktop
             New-UDSideNavItem -Text "AD Devices" -Url "adcomputers" -Icon desktop
             New-UDSideNavItem -Text "AzureAD Devices" -Url "aadcomputers" -Icon desktop
         }
         New-UDSideNavItem -Text "Users" -Icon folder -Children {
             New-UDSideNavItem -Text "CM Users" -Url "cmusers" -Icon users
+            New-UDSideNavItem -Text "CM User Collections" -Url "cmucollections" -Icon users
             New-UDSideNavItem -Text "AD Users" -Url "adusers" -Icon users
             New-UDSideNavItem -Text "AD Groups" -Url "adgroups" -Icon users_cog
             New-UDSideNavItem -Text "AzureAD Users" -Url "aadusers" -Icon users
