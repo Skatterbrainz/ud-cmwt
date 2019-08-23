@@ -2,6 +2,9 @@
 
 CMWT built on Universal Dashboard Community Edition
 
+* Note: This is not yet a published module. 
+* Download/Extract/Import-Module required for now.
+
 ## Requirements
 
 * PowerShell module: UniversalDashboard.Community (2.5.3 or later)
