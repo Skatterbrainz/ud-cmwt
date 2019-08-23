@@ -31,6 +31,48 @@
     Write-UDLog -Message $Cache:ConnectionInfo.Server
     Write-UDLog -Message $Cache:ConnectionInfo.SiteCode
 
+    <#
+    Assets and Compliance
+    Software Library
+        Applications
+        Application Groups
+        Packages
+        Software Updates
+            All Updates
+            Update Groups
+            Update Packages
+            ADRs
+        Operating Systems
+            OS Images
+            OS Upgrade Packages
+            Drivers
+            Driver Packages
+            Boot Images
+            Task Sequences
+        Office 365
+            Office 365 Updates
+        Windows 10 
+            Servicing Plans
+        Scripts
+    Monitoring
+        Queries
+        Reports
+        Site Status
+        Component Status
+        Deployments
+        Client Health
+    Administration
+        Hierarchy
+        Discovery Methods
+        Site Boundaries
+        Boundary Groups
+        Site Systems
+        Security / Accounts
+        Client Settings
+        Distribution Points
+        Distribution Groups
+    #>
+
     $Navigation = New-UDSideNav -Content {
         New-UDSideNavItem -Text "Home" -Url "Home" -Icon home
         New-UDSideNavItem -Text "$Server" -Icon folder -Children {
@@ -57,6 +99,7 @@
                 New-UDSideNavItem -Text "Packages" -Url "cmpackages" -Icon app_store
                 New-UDSideNavItem -Text "OS Images" -Url "cmosimages" -Icon windows
                 New-UDSideNavItem -Text "OS Upgrades" -Url "cmosupgrades" -Icon windows
+                New-UDSideNavItem -Text "Task Sequences" -Url "cmtasksequences" -Icon network_wired
                 New-UDSideNavItem -Text "Boot Images" -Url "cmbootimages" -Icon windows
             }
             New-UDSideNavItem -Text "CM Inventory" -Icon folder -Children {
