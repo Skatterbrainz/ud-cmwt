@@ -51,6 +51,23 @@
             New-UDSideNavItem -Text "AD Groups" -Url "adgroups" -Icon users_cog
             New-UDSideNavItem -Text "AzureAD Users" -Url "aadusers" -Icon users
         }
+        New-UDSideNavItem -Text "Software" -Icon folder -Children {
+            New-UDSideNavItem -Text "CM Deployments" -Icon folder -Children {
+                New-UDSideNavItem -Text "Applications" -Url "cmapps" -Icon app_store
+                New-UDSideNavItem -Text "Packages" -Url "cmpackages" -Icon app_store
+                New-UDSideNavItem -Text "OS Images" -Url "cmosimages" -Icon windows
+                New-UDSideNavItem -Text "OS Upgrades" -Url "cmosupgrades" -Icon windows
+                New-UDSideNavItem -Text "Boot Images" -Url "cmbootimages" -Icon windows
+            }
+            New-UDSideNavItem -Text "CM Inventory" -Icon folder -Children {
+                New-UDSideNavItem -Text "Installed Software" -Url "cmswinventory" -Icon file_contract
+                New-UDSideNavItem -Text "Operating Systems" -Url "cmswinventory" -Icon file_alt
+                New-UDSideNavItem -Text "Installed Software" -Url "cmswinventory" -Icon file_contract
+            }
+        }
+        New-UDSideNavItem -Text "References" -Url "references" -Icon folder
+        New-UDSideNavItem -Text "Cool Stuff" -Url "stuff" -Icon folder
+        New-UDSideNavItem -Text "UD Documentation" -Url "https://docs.universaldashboard.io/" -Icon link
         New-UDSideNavItem -Text "About" -Url "About" -Icon info
     }
     $Dashboard = New-UDDashboard -Title "CMWT" -Pages $Pages -Navigation $Navigation
