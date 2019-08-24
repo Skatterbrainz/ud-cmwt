@@ -10,7 +10,7 @@
 <div class='left-align'>
 <p>If you would like to contribute to this project, please submit code changes through pull requests.</p>
 <p>If you don't want to write any code, please submit ideas/bugs using the 'Issues' on the GitHub repo.</p>
-<p>Thank you!</p>
+<p>Thank you!</p><br/>
 </div>
 <div class='left-align'>
 <b>Module Versions</b>
