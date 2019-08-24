@@ -36,6 +36,18 @@ function Import-CmwtCredential {
         Write-Warning "File not found: $FilePath"
     }
 }
+
+function Import-CmwtQuery {
+    [CmdletBinding()]
+    param (
+        [parameter(Mandatory)] [ValidateNotNullOrEmpty)()] [string] $QueryName
+    )
+    $qfpath = Join-Path -Path (Split-Path $PSScriptRoot) -ChildPath "cmqueries"
+    $qfile = Join-Path -Path $pfpath -ChildPath $QueryName
+    if (Test-Path $qfile) {
+        Get-Content -Path $qfile -Raw
+    }
+}
 function Start-UDCmwtDashboard {
     [CmdletBinding()]
     param (
