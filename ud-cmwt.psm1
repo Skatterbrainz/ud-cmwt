@@ -102,6 +102,9 @@
                 New-UDSideNavItem -Text "Task Sequences" -Url "cmtasksequences" -Icon network_wired
                 New-UDSideNavItem -Text "Boot Images" -Url "cmbootimages" -Icon windows
             }
+            New-UDSideNavItem -Text "CM Updates" -Icon folder -Children {
+                New-UDSideNavItem -Text "Update Packages" -Url "cmupdatepkgs" -Icon stroopwafel
+            }
             New-UDSideNavItem -Text "CM Inventory" -Icon folder -Children {
                 New-UDSideNavItem -Text "Installed Software" -Url "cmswinventory" -Icon file_contract
                 New-UDSideNavItem -Text "Operating Systems" -Url "cmswinventory" -Icon file_alt
