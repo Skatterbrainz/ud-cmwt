@@ -121,6 +121,7 @@ function Start-UDCmwtDashboard {
             New-UDSideNavItem -Text "Site Boundaries" -Url "cmboundaries" -Icon city
             New-UDSideNavItem -Text "Boundary Groups" -Url "cmboundarygroups" -Icon city
             New-UDSideNavItem -Text "Site Systems" -Url "cmsitesystems" -Icon server
+            New-UDSideNavItem -Text "Site Administrators" -Url "cmadmins" -Icon user_shield
         }
         New-UDSideNavItem -Text "CM Monitoring" -Icon folder -Children {
             New-UDSideNavItem -Text "$Server - Processes" -Url "processes" -Icon tachometer
@@ -128,6 +129,8 @@ function Start-UDCmwtDashboard {
             New-UDSideNavItem -Text "$Server - Event Log" -PageName "eventlog" -Icon thermometer
             New-UDSideNavItem -Text "$SiteCode - Site Status" -Url "cmsitestatus" -Icon medkit
             New-UDSideNavItem -Text "$SiteCode - Component Status" -Url "cmcompstatus" -Icon medkit
+            New-UDSideNavItem -Text "$SiteCode - Deployments" -Url "cmdepsummary" -Icon thermometer
+            New-UDSideNavItem -Text "SUP Synch Status" -Url "cmsupsynch" -Icon thermometer
         }
         New-UDSideNavItem -Text "References" -Url "references" -Icon link
         New-UDSideNavItem -Text "UD Documentation" -Url "https://docs.universaldashboard.io/" -Icon link
