@@ -2,7 +2,7 @@
 
 CMWT built on Universal Dashboard Community Edition
 
-* Note: This is not yet a published module. 
+* Note: This is not yet a published module.
 * Download/Extract/Import-Module required for now.
 
 ## Requirements
@@ -37,3 +37,61 @@ Launch CMWT on port 10001 at "http://localhost:10001"
 $cred = Get-Credential # enter AzureAD credentials
 Start-UDCmwtDashboard -Server "cm01" -SiteCode "P01" -Credential $cred -Port 10001
 ```
+
+## Roadmap / Notes
+
+* Assets and Compliance
+  * Devices (List, CrossLink)
+  * Device Collections (List, Members, Add/Remove)
+  * Users (List, CrossLink)
+  * User Collections (List, Members, Add/Remove, Notify)
+  * AD Computers (Enable/Disable, ClientTools)
+  * AD Users (Enable, Disable, Unlock, Reset, AddGroup, RemoveGroup)
+  * AD Security Groups (List, Members, Add/Remove, Notify)
+  * AAD Devices (List)
+  * AAD Users (List, Notify)
+  * AAD Groups (List, Members, Notify)
+* Software Library
+  * Applications (List, Details, Content, Deployments)
+  * Application Groups (List, Details, Content, Deployments)
+  * Packages (List, Details, Content, Deployments)
+  * Software Updates
+    * All Updates (List, Details, Groups)
+    * Update Groups (List, Details, Members)
+    * Update Packages (List, Details, Members)
+    * ADRs (List, Details)
+  * Operating Systems
+    * OS Images
+    * OS Upgrade Packages
+    * Drivers
+    * Driver Packages
+    * Boot Images
+    * Task Sequences
+  * Office 365
+    * Office 365 Updates
+  * Windows 10
+    * Servicing Plans
+  * Scripts
+* Monitoring
+  * Queries
+  * Reports
+  * Site Status
+  * Component Status
+  * Update Synchronization
+  * App Deployments
+  * Update Deployments
+  * Client Health
+* Administration
+  * Hierarchy
+    * Maintenance Tasks
+    * Client Installation
+    * Site Boundaries
+    * Boundary Groups
+    * Site Systems
+    * Discovery Methods
+  * Client Settings
+  * Distribution Points
+  * Distribution Groups
+  * Security - Users
+  * Security - Roles
+  * Security - Scopes

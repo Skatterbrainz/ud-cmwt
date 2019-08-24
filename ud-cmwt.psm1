@@ -31,48 +31,6 @@
     Write-UDLog -Message $Cache:ConnectionInfo.Server
     Write-UDLog -Message $Cache:ConnectionInfo.SiteCode
 
-    <#
-    Assets and Compliance
-    Software Library
-        Applications
-        Application Groups
-        Packages
-        Software Updates
-            All Updates
-            Update Groups
-            Update Packages
-            ADRs
-        Operating Systems
-            OS Images
-            OS Upgrade Packages
-            Drivers
-            Driver Packages
-            Boot Images
-            Task Sequences
-        Office 365
-            Office 365 Updates
-        Windows 10
-            Servicing Plans
-        Scripts
-    Monitoring
-        Queries
-        Reports
-        Site Status
-        Component Status
-        Deployments
-        Client Health
-    Administration
-        Hierarchy
-        Discovery Methods
-        Site Boundaries
-        Boundary Groups
-        Site Systems
-        Security / Accounts
-        Client Settings
-        Distribution Points
-        Distribution Groups
-    #>
-
     $Navigation = New-UDSideNav -Content {
         New-UDSideNavItem -Text "Home" -Url "Home" -Icon home
         New-UDSideNavItem -Text "Devices" -Icon folder -Children {
