@@ -75,12 +75,7 @@
 
     $Navigation = New-UDSideNav -Content {
         New-UDSideNavItem -Text "Home" -Url "Home" -Icon home
-        New-UDSideNavItem -Text "$Server" -Icon folder -Children {
-            New-UDSideNavItem -Text "Processes" -Url "processes" -Icon tachometer
-            New-UDSideNavItem -Text "Services" -PageName "services" -Icon tachometer
-            New-UDSideNavItem -Text "Event Log" -PageName "eventlog" -Icon tachometer
-        }
-        New-UDSideNavItem -Text "Machines" -Icon folder -Children {
+        New-UDSideNavItem -Text "Devices" -Icon folder -Children {
             New-UDSideNavItem -Text "CM Devices" -Url "cmdevices" -Icon desktop
             New-UDSideNavItem -Text "CM Device Collections" -Url "cmdcollections" -Icon desktop
             New-UDSideNavItem -Text "AD Devices" -Url "adcomputers" -Icon desktop
@@ -97,13 +92,20 @@
             New-UDSideNavItem -Text "CM Deployments" -Icon folder -Children {
                 New-UDSideNavItem -Text "Applications" -Url "cmapps" -Icon app_store
                 New-UDSideNavItem -Text "Packages" -Url "cmpackages" -Icon app_store
-                New-UDSideNavItem -Text "OS Images" -Url "cmosimages" -Icon windows
-                New-UDSideNavItem -Text "OS Upgrades" -Url "cmosupgrades" -Icon windows
-                New-UDSideNavItem -Text "Task Sequences" -Url "cmtasksequences" -Icon network_wired
-                New-UDSideNavItem -Text "Boot Images" -Url "cmbootimages" -Icon windows
             }
             New-UDSideNavItem -Text "CM Updates" -Icon folder -Children {
+                New-UDSideNavItem -Text "All Updates" -Url "cmupdates" -Icon stroopwafel
+                New-UDSideNavItem -Text "Update Groups" -Url "cmupdategrps" -Icon stroopwafel
                 New-UDSideNavItem -Text "Update Packages" -Url "cmupdatepkgs" -Icon stroopwafel
+                New-UDSideNavItem -Text "ADRs" -Url "cmadrs" -Icon stroopwafel
+            }
+            New-UDSideNavItem -Text "CM OS Deployment" -Icon folder -Children {
+                New-UDSideNavItem -Text "OS Images" -Url "cmosimages" -Icon windows
+                New-UDSideNavItem -Text "OS Upgrades" -Url "cmosupgrades" -Icon windows
+                New-UDSideNavItem -Text "Driver Packages" -Url "cmdriverpkgs" -Icon usb
+                New-UDSideNavItem -Text "Task Sequences" -Url "cmtasksequences" -Icon network_wired
+                New-UDSideNavItem -Text "Boot Images" -Url "cmbootimages" -Icon windows
+                New-UDSideNavItem -Text "VHD Packages" -Url "cmvhdpkgs" -Icon gears
             }
             New-UDSideNavItem -Text "CM Inventory" -Icon folder -Children {
                 New-UDSideNavItem -Text "Installed Software" -Url "cmswinventory" -Icon file_contract
@@ -111,8 +113,20 @@
                 New-UDSideNavItem -Text "Installed Software" -Url "cmswinventory" -Icon file_contract
             }
         }
-        New-UDSideNavItem -Text "References" -Url "references" -Icon folder
-        New-UDSideNavItem -Text "Cool Stuff" -Url "stuff" -Icon folder
+        New-UDSideNavItem -Text "CM Administration" -Icon folder -Children {
+            New-UDSideNavItem -Text "Discovery Methods" -Url "cmdiscmethods" -Icon search
+            New-UDSideNavItem -Text "Site Boundaries" -Url "cmboundaries" -Icon city
+            New-UDSideNavItem -Text "Boundary Groups" -Url "cmboundarygroups" -Icon city
+            New-UDSideNavItem -Text "Site Systems" -Url "cmsitesystems" -Icon server
+        }
+        New-UDSideNavItem -Text "CM Monitoring" -Icon folder -Children {
+            New-UDSideNavItem -Text "$Server - Processes" -Url "processes" -Icon tachometer
+            New-UDSideNavItem -Text "$Server - Services" -PageName "services" -Icon tachometer
+            New-UDSideNavItem -Text "$Server - Event Log" -PageName "eventlog" -Icon tachometer
+            New-UDSideNavItem -Text "$SiteCode - Site Status" -Url "cmsitestatus" -Icon medkit
+            New-UDSideNavItem -Text "$SiteCode - Component Status" -Url "cmcompstatus" -Icon medkit
+        }
+        New-UDSideNavItem -Text "References" -Url "references" -Icon link
         New-UDSideNavItem -Text "UD Documentation" -Url "https://docs.universaldashboard.io/" -Icon link
         New-UDSideNavItem -Text "Send Feedback" -Url "https://github.com/Skatterbrainz/ud-cmwt/issues" -Icon comment
         New-UDSideNavItem -Text "About" -Url "About" -Icon info
