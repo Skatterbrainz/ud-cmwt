@@ -40,33 +40,35 @@ Start-UDCmwtDashboard -Server "cm01" -SiteCode "P01" -Credential $cred -Port 100
 
 ## Roadmap / Notes
 
+(** available now)
+
 * Assets and Compliance
-  * Devices (List, CrossLink)
-  * Device Collections (List, Members, Add/Remove)
-  * Users (List, CrossLink)
-  * User Collections (List, Members, Add/Remove, Notify)
-  * AD Computers (Enable/Disable, ClientTools)
-  * AD Users (Enable, Disable, Unlock, Reset, AddGroup, RemoveGroup)
-  * AD Security Groups (List, Members, Add/Remove, Notify)
-  * AAD Devices (List)
-  * AAD Users (List, Notify)
+  * Devices (List**, CrossLink)
+  * Device Collections (List**, Members, Add/Remove)
+  * Users (List**, CrossLink)
+  * User Collections (List**, Members, Add/Remove, Notify)
+  * AD Computers (List**, Enable/Disable, ClientTools)
+  * AD Users (List**, Enable, Disable, Unlock, Reset, AddGroup, RemoveGroup)
+  * AD Security Groups (List**, Members, Add/Remove, Notify)
+  * AAD Devices (List**)
+  * AAD Users (List**, Notify)
   * AAD Groups (List, Members, Notify)
 * Software Library
-  * Applications (List, Details, Content, Deployments)
+  * Applications (List**, Details, Content, Deployments)
   * Application Groups (List, Details, Content, Deployments)
-  * Packages (List, Details, Content, Deployments)
+  * Packages (List**, Details, Content, Deployments)
   * Software Updates
     * All Updates (List, Details, Groups)
     * Update Groups (List, Details, Members)
-    * Update Packages (List, Details, Members)
+    * Update Packages (List**, Details, Members)
     * ADRs (List, Details)
   * Operating Systems
-    * OS Images
-    * OS Upgrade Packages
-    * Drivers
-    * Driver Packages
-    * Boot Images
-    * Task Sequences
+    * OS Images (List**, Details)
+    * OS Upgrade Packages (List**, Details)
+    * Drivers (List, Details, Packages)
+    * Driver Packages (List**, Details, Members)
+    * Boot Images (List**, Details, TaskSequences)
+    * Task Sequences (List**, Details, Deployments, References)
   * Office 365
     * Office 365 Updates
   * Windows 10
@@ -81,6 +83,14 @@ Start-UDCmwtDashboard -Server "cm01" -SiteCode "P01" -Credential $cred -Port 100
   * App Deployments
   * Update Deployments
   * Client Health
+  * Server Health
+    * Processes (List**)
+    * Services (List**)
+    * System Event Logs (List**)
+    * Application Event Logs (List)
+* Diagnostics
+  * Log File Viewer
+  * CM Cache Viewer
 * Administration
   * Hierarchy
     * Maintenance Tasks
