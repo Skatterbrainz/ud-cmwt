@@ -125,7 +125,7 @@ function Start-UDCmwtDashboard {
         New-UDSideNavItem -Text "CM Monitoring" -Icon folder -Children {
             New-UDSideNavItem -Text "$Server - Processes" -Url "processes" -Icon tachometer
             New-UDSideNavItem -Text "$Server - Services" -PageName "services" -Icon tachometer
-            New-UDSideNavItem -Text "$Server - Event Log" -PageName "eventlog" -Icon tachometer
+            New-UDSideNavItem -Text "$Server - Event Log" -PageName "eventlog" -Icon thermometer
             New-UDSideNavItem -Text "$SiteCode - Site Status" -Url "cmsitestatus" -Icon medkit
             New-UDSideNavItem -Text "$SiteCode - Component Status" -Url "cmcompstatus" -Icon medkit
         }

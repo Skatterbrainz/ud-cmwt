@@ -7,7 +7,7 @@ ComponentName,
 case
     when (Status = 0) then 'Good'
     when (Status = 1) then 'Warning'
-    when (Status = 2) then 'Fail'
+    when (Status = 2) then 'Error'
     end as Status,
 case
     when (state = 0) then 'Stopped'
