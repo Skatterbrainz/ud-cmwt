@@ -1,11 +1,56 @@
-﻿function Start-UDCmwtDashboard {
+﻿function Export-CmwtCredential {
+    [CmdletBinding()]
+    param (
+        [parameter()] [ValidateNotNullOrEmpty()] [string] $FilePath = $(Join-Path -Path $env:USERPROFILE -ChildPath "Documents\cmwt-aad-cred.json"),
+        [parameter()] [switch] $Force
+    )
+    if ((Test-Path $FilePath) -and (-not $Force)) {
+        Write-Warning "File [$FilePath] exists! To overwrite, use the -Force parameter"
+        break
+    }
+    else {
+        $cred = Get-Credential -Message "AzureAD Credentials"
+        if ($null -ne $cred) {
+            $cred | Select Username,@{n="Password"; e={$_.password | ConvertFrom-SecureString}} |
+                ConvertTo-Json |
+                    Set-Content -Path $FilePath -Encoding UTF8 -Force
+        }
+        else {
+            Write-Warning "Credentials were not provided for exporting."
+        }
+    }
+}
+
+function Import-CmwtCredential {
+    [CmdletBinding()]
+    param (
+        [parameter()] [ValidateNotNullOrEmpty()]
+        [string] $FilePath = $(Join-Path -Path $env:USERPROFILE -ChildPath "Documents\cmwt-aad-cred.json")
+    )
+    Write-Verbose "searching for file: $FilePath"
+    if (Test-Path $FilePath) {
+        $xdata = Get-Content -Path $FilePath -Encoding UTF8 -Raw | ConvertFrom-Json
+        $(New-Object -TypeName PSCredential $xdata.UserName, ($xdata.Password | ConvertTo-SecureString))
+    }
+    else {
+        Write-Warning "File not found: $FilePath"
+    }
+}
+function Start-UDCmwtDashboard {
     [CmdletBinding()]
     param (
         [parameter(Mandatory)] [ValidateLength(3,15)] [string] $Server,
         [parameter(Mandatory)] [ValidateLength(3,3)] [string] $SiteCode,
-        [parameter(Mandatory)] [pscredential] $Credential,
+        [parameter()] [pscredential] $Credential,
         [parameter()] [int] $Port = 8081
     )
+    if ($null -eq $Credential) {
+        $Credential = Import-CmwtCredential
+        if ($null -eq $Credential) {
+            Write-Warning "credentials not provided or available in cred-file. Aborting"
+            break
+        }
+    }
     $Cache:Loading = $True
     $Cache:ConnectionInfo = @{
         Server     = $Server
