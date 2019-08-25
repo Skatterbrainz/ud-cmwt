@@ -9,6 +9,10 @@
     Overwrite destination if it exists
 .EXAMPLE
     Export-CmwtCredential -Force
+.OUTPUTS
+    JSON file
+.NOTES
+    NOT the most secure way to store credentials! Protect access to this file!
 #>
 
 function Export-CmwtCredential {
@@ -43,6 +47,8 @@ function Export-CmwtCredential {
     Path and filename. Default is "$($env:userprofile)\documents\cmwt-aad-cred.json"
 .EXAMPLE
     $aadCred = Import-CmwtCredential
+.OUTPUTS
+    PSCredential object
 #>
 function Import-CmwtCredential {
     [CmdletBinding()]
@@ -75,6 +81,10 @@ function Import-CmwtCredential {
     TCP Port to run local instance. Default is 8081
 .EXAMPLE
     Set-CmwtConfigJson -SmsProvider "CM01" -SqlHost "CM01" -SiteCode "P01" -Port 8080
+.OUTPUTS
+    JSON file
+.NOTES
+    JSON file can be edited externally if desired
 #>
 function Set-CmwtConfigJson {
     [CmdletBinding()]

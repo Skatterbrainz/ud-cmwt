@@ -66,6 +66,9 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
+### JSON file
 ## NOTES
+NOT the most secure way to store credentials!
+Protect access to this file!
 
 ## RELATED LINKS

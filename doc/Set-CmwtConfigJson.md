@@ -127,6 +127,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
+### JSON file
 ## NOTES
+JSON file can be edited externally if desired
 
 ## RELATED LINKS
