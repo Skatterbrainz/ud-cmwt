@@ -134,6 +134,12 @@ function Set-CmwtConfigJson {
 .EXAMPLE
     Start-UDCmwtDashboard
     Start CMWT using default parameters from configuration file
+.EXAMPLE
+    Start-UDCmwtDashboard -ConfigJson ".\myconfig.json"
+    Use specified configuration file
+.EXAMPLE
+    Start-UDCmwtDashboard -SmsProvider "CM01" -SqlHost "CM01" -SiteCode "P01"
+    Start with direct parameter values
 #>
 function Start-UDCmwtDashboard {
     [CmdletBinding()]

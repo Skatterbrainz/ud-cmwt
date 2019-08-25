@@ -29,6 +29,20 @@ Start-UDCmwtDashboard
 
 Start CMWT using default parameters from configuration file
 
+### EXAMPLE 2
+```
+Start-UDCmwtDashboard -ConfigJson ".\myconfig.json"
+```
+
+Use specified configuration file
+
+### EXAMPLE 3
+```
+Start-UDCmwtDashboard -SmsProvider "CM01" -SqlHost "CM01" -SiteCode "P01"
+```
+
+Start with direct parameter values
+
 ## PARAMETERS
 
 ### -ConfigJson
