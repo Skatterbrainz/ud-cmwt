@@ -37,29 +37,90 @@ function Import-CmwtCredential {
     }
 }
 
+function Set-CmwtConfigJson {
+    [CmdletBinding()]
+    param (
+        [parameter(Mandatory, HelpMessage="ConfigMgr SMS Provider name")]
+        [validateLength(3,32)] [string] $SmsProvider,
+        [parameter(Mandatory, HelpMessage="ConfigMgr SQL Hostname")]
+        [validateLength(3,32)] [string] $SqlHost,
+        [parameter(Mandatory, HelpMessage="ConfigMgr Site Code")]
+        [validateLength(3,3)] [string] $SiteCode,
+        [parameter(HelpMessage="Path to Configuration JSON file")]
+        [ValidateNotNullOrEmpty()]
+        [string] $FilePath = $(Join-Path $env:USERPROFILE "documents\cmwt-settings.json"),
+        [parameter()] [switch] $Force
+    )
+    if (Test-Path $FilePath) {
+        if ($Force) {
+            Write-Verbose "deleting existing file: $FilePath"
+            Get-Item -Path $FilePath | Remove-Item -Force -Confirm:$False
+        }
+        else {
+            Write-Warning "$FilePath exists.  To replace, use the -Force parameter."
+            break
+        }
+    }
+    Write-Verbose "saving settings to: $FilePath"
+    @{SMSPROVIDER = $SmsProvider; SQLHOST = $SqlHost; SITECODE = $SiteCode} |
+        ConvertTo-Json | Set-Content -Path $FilePath -Encoding UTF8 -Force
+    Write-Output "Settings were saved successfully to $FilePath"
+}
+
 function Start-UDCmwtDashboard {
     [CmdletBinding()]
     param (
-        [parameter(Mandatory)] [ValidateLength(3,15)] [string] $Server,
-        [parameter(Mandatory)] [ValidateLength(3,3)] [string] $SiteCode,
-        [parameter()] [pscredential] $Credential,
-        [parameter()] [int] $Port = 8081
+        [parameter(HelpMessage="Path to Configuration JSON file")] [string] $ConfigJson = $(Join-Path $env:USERPROFILE "documents\cmwt-settings.json"),
+        [parameter(HelpMessage="ConfigMgr SMS Provider name")] [string] $SmsProvider = "",
+        [parameter(HelpMessage="ConfigMgr SQL Hostname")] [string] $SqlHost = "",
+        [parameter(HelpMessage="ConfigMgr Site Code")] [string] $SiteCode = "",
+        [parameter(HelpMessage="AzureAD Credentials")] [pscredential] $Credential,
+        [parameter(HelpMessage="Local Port for CMWT")] [int] $Port = 8081
     )
     if ($null -eq $Credential) {
+        Write-Verbose "AzureAD credentials were not provided."
+        Write-Verbose "looking for default AzureAD credential file"
         $Credential = Import-CmwtCredential
         if ($null -eq $Credential) {
             Write-Warning "credentials not provided or available in cred-file. Aborting"
             break
         }
     }
+    if (![string]::IsNullOrEmpty($ConfigJson)) {
+        Write-Verbose "looking for default site configuration file: $ConfigJson"
+        if (Test-Path $ConfigJson) {
+            Write-Verbose "importing local settings file: $ConfigJson"
+            $jdat = Get-Content $ConfigJson -Encoding UTF8 -Raw | ConvertFrom-Json
+            $SmsProvider = $jdat.SMSPROVIDER
+            $SqlHost  = $jdat.SQLHOST
+            $SiteCode = $jdat.SITECODE
+            if ([string]::IsNullOrEmpty($SmsProvider) -or ([string]::IsNullOrEmpty($SqlHost)) -or ([string]::IsNullOrEmpty($SiteCode))) {
+                Write-Warning "invalid configuration data. unable to continue."
+                break
+            }
+            else {
+                Write-Verbose "successfully imported configuration data"
+            }
+        }
+        else {
+            Write-Warning "file not found: $ConfigJson"
+            Write-Warning "no settings were provided. aborting"
+            break
+        }
+    }
+    if ([string]::IsNullOrEmpty($SmsProvider) -or ([string]::IsNullOrEmpty($SqlHost)) -or ([string]::IsNullOrEmpty($SiteCode))) {
+        Write-Warning "No site parameters provided. unable to continue."
+        break
+    }
     $Cache:Loading = $True
     $Cache:ConnectionInfo = @{
-        Server     = $Server
-        SiteCode   = $SiteCode
-        Credential = $Credential
-        AppName    = "CMWT"
-        AppVersion = [string]$((Get-Module 'ud-cmwt').Version -join '.')
-        BasePath   = [string]$(Split-Path ((Get-Module 'ud-cmwt').Path))
+        SmsProvider = $SmsProvider
+        Server      = $SqlHost
+        SiteCode    = $SiteCode
+        Credential  = $Credential
+        AppName     = "CMWT"
+        AppVersion  = [string]$((Get-Module 'ud-cmwt').Version -join '.')
+        BasePath    = [string]$(Split-Path ((Get-Module 'ud-cmwt').Path))
     }
 
     $Utilities = (Join-Path $PSScriptRoot 'ud-cminit.psm1')
