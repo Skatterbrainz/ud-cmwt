@@ -140,6 +140,10 @@ function Set-CmwtConfigJson {
 .EXAMPLE
     Start-UDCmwtDashboard -SmsProvider "CM01" -SqlHost "CM01" -SiteCode "P01"
     Start with direct parameter values
+.OUTPUTS
+    UDDashboard instance: Name, Port, Running, DashboardService
+.NOTES
+    Tested with UD Community Edition 2.5.3 only
 #>
 function Start-UDCmwtDashboard {
     [CmdletBinding()]

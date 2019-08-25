@@ -150,6 +150,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## OUTPUTS
 
+### UDDashboard instance: Name, Port, Running, DashboardService
 ## NOTES
+Tested with UD Community Edition 2.5.3 only
 
 ## RELATED LINKS
