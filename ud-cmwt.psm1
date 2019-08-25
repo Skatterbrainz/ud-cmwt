@@ -1,4 +1,17 @@
-﻿function Export-CmwtCredential {
+﻿<#
+.SYNOPSIS
+    Export AzureAD credentials to a JSON file
+.DESCRIPTION
+    Import AzureAD credentials to a JSON file for use with CMWT
+.PARAMETER FilePath
+    Path and filename. Default is "$($env:userprofile)\documents\cmwt-aad-cred.json"
+.PARAMETER Force
+    Overwrite destination if it exists
+.EXAMPLE
+    Export-CmwtCredential -Force
+#>
+
+function Export-CmwtCredential {
     [CmdletBinding()]
     param (
         [parameter()] [ValidateNotNullOrEmpty()] [string] $FilePath = $(Join-Path -Path $env:USERPROFILE -ChildPath "Documents\cmwt-aad-cred.json"),
@@ -21,6 +34,16 @@
     }
 }
 
+<#
+.SYNOPSIS
+    Import CMWT AzureAD credentials from JSON file
+.DESCRIPTION
+    Import CMWT AzureAD credentials from JSON file created using Export-CmwtCredential
+.PARAMETER FilePath
+    Path and filename. Default is "$($env:userprofile)\documents\cmwt-aad-cred.json"
+.EXAMPLE
+    $aadCred = Import-CmwtCredential
+#>
 function Import-CmwtCredential {
     [CmdletBinding()]
     param (
@@ -37,6 +60,22 @@ function Import-CmwtCredential {
     }
 }
 
+<#
+.SYNOPSIS
+    Create or Update CMWT configuration settings file
+.DESCRIPTION
+    Create or Update CMWT configuration settings file
+.PARAMETER SmsProvider
+    Configuration Manager SMS Provider hostname
+.PARAMETER SqlHost
+    Configuration Manager site database SQL Server hostname
+.PARAMETER SiteCode
+    Configuration Manager Site Code
+.PARAMETER Port
+    TCP Port to run local instance. Default is 8081
+.EXAMPLE
+    Set-CmwtConfigJson -SmsProvider "CM01" -SqlHost "CM01" -SiteCode "P01" -Port 8080
+#>
 function Set-CmwtConfigJson {
     [CmdletBinding()]
     param (
@@ -46,6 +85,8 @@ function Set-CmwtConfigJson {
         [validateLength(3,32)] [string] $SqlHost,
         [parameter(Mandatory, HelpMessage="ConfigMgr Site Code")]
         [validateLength(3,3)] [string] $SiteCode,
+        [parameter(HelpMessage="TCP Port Number")]
+        [int] $Port = 8081,
         [parameter(HelpMessage="Path to Configuration JSON file")]
         [ValidateNotNullOrEmpty()]
         [string] $FilePath = $(Join-Path $env:USERPROFILE "documents\cmwt-settings.json"),
@@ -62,11 +103,35 @@ function Set-CmwtConfigJson {
         }
     }
     Write-Verbose "saving settings to: $FilePath"
-    @{SMSPROVIDER = $SmsProvider; SQLHOST = $SqlHost; SITECODE = $SiteCode} |
+    @{SMSPROVIDER = $SmsProvider; SQLHOST = $SqlHost; SITECODE = $SiteCode; PORT = $Port} |
         ConvertTo-Json | Set-Content -Path $FilePath -Encoding UTF8 -Force
     Write-Output "Settings were saved successfully to $FilePath"
 }
 
+<#
+.SYNOPSIS
+    Launch CMWT UniversalDashboard instance
+.DESCRIPTION
+    Ummmmm, yeah, I just said that.
+.PARAMETER ConfigJson
+    Path to CMWT configuration JSON file. Default is "($env:USERPROFILE)\documents\cmwt-settings.json"
+    Use the Set-CmwtConfigJson function to create or update a configuration file.
+.PARAMETER SmsProvider
+    Configuration Manager SMS Provider host name
+    ConfigJson overrides this parameter
+.PARAMETER SqlHost
+    Configuration Manager site database SQL Server host name
+    ConfigJson overrides this parameter
+.PARAMETER SiteCode
+    Configuration Manager site code
+    ConfigJson overrides this parameter
+.PARAMETER Credential
+    AzureAD credentials
+    If omitted, read from AzureAD credentials file
+.PARAMETER Port
+    TCP port to run CMWT instance. Default is 8081
+    ConfigJson overrides this parameter
+#>
 function Start-UDCmwtDashboard {
     [CmdletBinding()]
     param (
@@ -94,6 +159,7 @@ function Start-UDCmwtDashboard {
             $SmsProvider = $jdat.SMSPROVIDER
             $SqlHost  = $jdat.SQLHOST
             $SiteCode = $jdat.SITECODE
+            $Port     = $jdat.PORT
             if ([string]::IsNullOrEmpty($SmsProvider) -or ([string]::IsNullOrEmpty($SqlHost)) -or ([string]::IsNullOrEmpty($SiteCode))) {
                 Write-Warning "invalid configuration data. unable to continue."
                 break
@@ -138,6 +204,8 @@ function Start-UDCmwtDashboard {
 
     Write-UDLog -Message $Cache:ConnectionInfo.Server
     Write-UDLog -Message $Cache:ConnectionInfo.SiteCode
+
+    #region NavigationMenu
 
     $Navigation = New-UDSideNav -Content {
         New-UDSideNavItem -Text "Home" -Url "Home" -Icon home
@@ -226,8 +294,10 @@ function Start-UDCmwtDashboard {
         New-UDSideNavItem -Text "References" -Url "references" -Icon link
         New-UDSideNavItem -Text "UD Documentation" -Url "https://docs.universaldashboard.io/" -Icon link
         New-UDSideNavItem -Text "Send Feedback" -Url "https://github.com/Skatterbrainz/ud-cmwt/issues" -Icon comment
-        New-UDSideNavItem -Text "About" -Url "About" -Icon info
+        New-UDSideNavItem -Text "About" -Url "About" -Icon info_circle
     }
-    $Dashboard = New-UDDashboard -Title "CMWT" -Pages $Pages -Navigation $Navigation
+    #endregion NavigationMenu
+
+    $Dashboard = New-UDDashboard -Title $AppName -Pages $Pages -Navigation $Navigation
     Start-UDDashboard -Dashboard $Dashboard -Port $Port
 }
