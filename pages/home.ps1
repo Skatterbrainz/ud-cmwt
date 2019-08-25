@@ -4,7 +4,7 @@
             New-UDCard -Image (New-UDImage -Path $(Join-Path (Split-Path $PSScriptRoot) 'assets/splash1.png') -Height 250)
         }
         New-UDColumn -Content {
-            New-UDHtml -Markup "<div class='left-align'><h2>$(Get-Date -f 'dddd MMMM dd, yyyy')</h2>
+            New-UDHtml -Markup "<div class='left-align'><h4>$(Get-Date -f 'dddd MMMM dd, yyyy')</h4>
 <p>Configuration Manager Web Toolkit is built on Universal Dashboard Community Edition.</p>
 <p>CMWT is an open source PowerShell project at <a href=`"https://github.com/Skatterbrainz/ud-cmwt`" target=`"_blank`">GitHub</a></p></div>
 <div class='left-align'>
