@@ -45,7 +45,6 @@ Start-UDCmwtDashboard
 Launch CMWT on port 10001 at "http://localhost:10001"
 
 ```powershell
-$cred = Get-Credential # enter AzureAD credentials
 Start-UDCmwtDashboard -Port 10001
 ```
 
