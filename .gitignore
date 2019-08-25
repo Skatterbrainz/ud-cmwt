@@ -1,2 +1,1 @@
-ignore/cmwtutils.psm1
-ignore/xcmsitestatus.ps1
+ignore/*
