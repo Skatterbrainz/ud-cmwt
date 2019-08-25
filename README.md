@@ -24,18 +24,35 @@ Install-Module UniversalDashboard.Community # or download
 Install-Module ud-cmwt
 ```
 
-Launch CMWT on port 8080 and access at "http://localhost:8080"
+Prepare a configuration JSON file
 
 ```powershell
-$cred = Get-Credential # enter AzureAD credentials
-Start-UDCmwtDashboard -Server "cm01" -SiteCode "P01" -Credential $cred
+Set-CmwtConfigJson -SmsProvider "CM01" -SqlHost "CM01" -SiteCode "CM01"
+```
+
+Prepare an AzureAD credentials file
+
+```powershell
+Export-CmwtCredential
+```
+
+Launch CMWT on default port 8081 and access at "http://localhost:8081"
+
+```powershell
+Start-UDCmwtDashboard
 ```
 
 Launch CMWT on port 10001 at "http://localhost:10001"
 
 ```powershell
 $cred = Get-Credential # enter AzureAD credentials
-Start-UDCmwtDashboard -Server "cm01" -SiteCode "P01" -Credential $cred -Port 10001
+Start-UDCmwtDashboard -Port 10001
+```
+
+Launch CMWT using command-line parameter values
+
+```powershell
+Start-UDCmwtDashboard -SmsProvider "CM01" -SqlHost "CM01" -SiteCode "P01"
 ```
 
 ## Roadmap / Notes
