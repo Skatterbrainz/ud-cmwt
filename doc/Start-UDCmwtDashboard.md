@@ -22,12 +22,12 @@ Ummmmm, yeah, I just said that.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> {{ Add example code here }}
+### EXAMPLE 1
+```
+Start-UDCmwtDashboard
 ```
 
-{{ Add example description here }}
+Start CMWT using default parameters from configuration file
 
 ## PARAMETERS
 

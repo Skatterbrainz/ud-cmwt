@@ -131,6 +131,9 @@ function Set-CmwtConfigJson {
 .PARAMETER Port
     TCP port to run CMWT instance. Default is 8081
     ConfigJson overrides this parameter
+.EXAMPLE
+    Start-UDCmwtDashboard
+    Start CMWT using default parameters from configuration file
 #>
 function Start-UDCmwtDashboard {
     [CmdletBinding()]
