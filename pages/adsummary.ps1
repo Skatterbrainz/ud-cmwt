@@ -1,16 +1,23 @@
 New-UDPage -Name "ADSummary" -Id 'adsummary' -Content {
-    New-UDTable -Title "Active Directory Summary: $($env:USERDNSDOMAIN)" -Header @("Name", "Count") -Endpoint {
+    New-UDCard -Title "Active Directory Summary: $($env:USERDNSDOMAIN)" -Content {""}
+    New-UDTable -Title "Objects Summary" -Header @("Name", "Count") -Endpoint {
         $computers = $(Get-ADSIComputer).Count
         $users     = $(Get-ADSIUser).Count
         $groups    = $(Get-ADSIGroup).Count
         $dcs       = $(Get-ADSIDomainController).Count
         $sites     = $(Get-ADSISite).Count
+        $gpos      = $(Get-ADSIGroupPolicyObject).Count
+        #$subnets   = $(Get-ADSISiteSubnet).Count
+        $links     = $(Get-ADSISiteLink).Count
         $Data = @(
             [PSCustomObject]@{ name = "Computers"; count = $computers }
             [PSCustomObject]@{ name = "Users"; count = $users }
             [PSCustomObject]@{ name = "Groups"; count = $groups }
-            [PSCustomObject]@{ name = "Sites"; count = $sites }
             [PSCustomObject]@{ name = "Domain Controllers"; count = $dcs }
+            [PSCustomObject]@{ name = "Group Policy Objects"; count = $gpos }
+            [PSCustomObject]@{ name = "Sites"; count = $sites }
+            [PSCustomObject]@{ name = "Site Links"; count = $links }
+            #[PSCustomObject]@{ name = "Subnets"; count = $subnets }
         )
         $Data | Out-UDTableData -Property @("name", "count")
     }

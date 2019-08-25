@@ -13,10 +13,10 @@
             } # row
             New-UDRow -Columns {
                 New-UDColumn -Content {
-                    New-UDCard -Id 'card1' -Title "ConfigMgr" -Text "ConfigMgr Site Summary" -Links @(New-UDLink -Url "./cmsummary" -Text "Summary")
+                    New-UDCard -Id 'card1' -Title "Config Mgr" -Text "ConfigMgr Site Summary" -Links @(New-UDLink -Url "./cmsummary" -Text "Summary")
                 }
                 New-UDColumn -Content {
-                    New-UDCard -id 'card2' -Title "AD" -Text "Active Directory Summary" -Links @(New-UDLink -Url "./adsummary" -Text "Summary")
+                    New-UDCard -id 'card2' -Title "Active Directory" -Text "Active Directory Summary" -Links @(New-UDLink -Url "./adsummary" -Text "Summary")
                 }
                 New-UDColumn -Content {
                     New-UDCard -id 'card3' -Title "SQL Server" -Text "SQL Server Summary" -Links @(New-UDLink -Url "./sqlsummary" -Text "Summary")
