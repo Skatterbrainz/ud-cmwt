@@ -133,11 +133,17 @@ function Start-UDCmwtDashboard {
             }
             New-UDSideNavItem -Text "$SiteHost SQL Server" -Icon folder -Children {
                 New-UDSideNavItem -Text "SQL Version" -Url "sqlserverinfo" -Icon usb
+                New-UDSideNavItem -Text "Database Files" -Url "sqlfiles" -Icon files_o
                 New-UDSideNavItem -Text "SQL Agent Jobs" -Url "sqlagentjobs" -Icon usb
-                New-UDSideNavItem -Text "SQL Agent Job History" -Url "sqlagentjobhistory" -Icon clock
-                New-UDSideNavItem -Text "Backup History" -Url "sqlbackuphistory" -Icon clock
-                New-UDSideNavItem -Text "Memory Usage" -Url "sqlmem" -Icon thermometer
-                New-UDSideNavItem -Text "SPN Registrations" -Url "sqlspn" -Icon search_location
+                New-UDSideNavItem -Text "Status" -Icon folder -Children {
+                    New-UDSideNavItem -Text "SQL Agent Job History" -Url "sqlagentjobhistory" -Icon clock
+                    New-UDSideNavItem -Text "Backup History" -Url "sqlbackuphistory" -Icon clock
+                    New-UDSideNavItem -Text "SPN Registrations" -Url "sqlspn" -Icon search_location
+                }
+                New-UDSideNavItem -Text "Performance" -Icon folder -Children {
+                    New-UDSideNavItem -Text "Memory Usage" -Url "sqlmem" -Icon thermometer
+                    New-UDSideNavItem -Text "Fragmentation" -Url "sqlindexfrag" -Icon thermometer
+                }
                 New-UDSideNavItem -Text "CM_$SiteCode Database" -Icon folder -Children {
                     New-UDSideNavItem -Text "Views" -Url "dbviews" -Icon table
                     New-UDSideNavItem -Text "Tables" -Url "dbtables" -Icon table
