@@ -28,7 +28,7 @@ function Export-CmwtCredential {
     else {
         $cred = Get-Credential -Message "AzureAD Credentials"
         if ($null -ne $cred) {
-            $cred | Select Username,@{n="Password"; e={$_.password | ConvertFrom-SecureString}} |
+            $cred | Select-Object Username,@{n="Password"; e={$_.password | ConvertFrom-SecureString}} |
                 ConvertTo-Json |
                     Set-Content -Path $FilePath -Encoding UTF8 -Force
         }
