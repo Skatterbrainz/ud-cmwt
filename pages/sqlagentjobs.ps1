@@ -1,6 +1,13 @@
-﻿New-UDPage -Name "SQL Agent Jobs" -Icon database -Content {
+﻿New-UDPage -Name "SQLAgentJobs" -Id 'sqlagentjobs' -Content {
     New-UDGrid -Title "SQL Agent Jobs: $($Cache:ConnectionInfo.Server)" -Endpoint {
-        Get-DbaAgentJob -SqlInstance $Cache:ConnectionInfo.Server | 
-            Select Name,OwnerLoginName,CurrentRunStatus,LastRunDate,LastRunOutcome | Out-UDGridData
+        Get-DbaAgentJob -SqlInstance $Cache:ConnectionInfo.Server | Foreach-Object {
+            [pscustomobject]@{
+                Name          = [string]$_.Name
+                Owner         = [string]$_.OwnerLoginName
+                CurrentStatus = [string]$_.CurrentRunStatus
+                LastRunDate   = [string]$_.LastRunDate
+                LastResult    = [string]$_.LastRunOutcome
+            }
+        } | Out-UDGridData
     }
 }
