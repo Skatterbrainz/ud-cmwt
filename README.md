@@ -36,4 +36,10 @@ Prepare an AzureAD credentials file
 Export-CmwtCredential
 ```
 
+Launch CMWT
+
+```powershell
+Start-UDCmwtDashboard
+```
+
 Refer to the [docs](https://github.com/Skatterbrainz/ud-cmwt/tree/master/doc) folder of this repositor for function examples and details.
