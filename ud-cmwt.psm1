@@ -281,12 +281,12 @@ function Start-UDCmwtDashboard {
         New-UDSideNavItem -Text "Home" -Url "Home" -Icon home
         New-UDSideNavItem -Text "ConfigMgr" -Icon folder -Children {
             New-UDSideNavItem -Text "Site Summary" -Url "cmsummary" -Icon database
-            New-UDSideNavItem -Text "Devices" -Icon folder -Children {
+            New-UDSideNavItem -Text "Assets" -Icon folder -Children {
                 New-UDSideNavItem -Text "Devices" -Url "cmdevices" -Icon desktop
+                New-UDSideNavItem -Text "Device Collections" -Url "cmdcollections" -Icon desktop
                 New-UDSideNavItem -Text "Users" -Url "cmusers" -Icon user
-                New-UDSideNavItem -Text "Device Collections" -Url "cmdcollections" -Icon deskpro
                 New-UDSideNavItem -Text "User Collections" -Url "cmucollections" -Icon users
-                New-UDSideNavItem -Text "Orchestration Groups" -Url "" -Icon deskpro
+                New-UDSideNavItem -Text "Orchestration Groups" -Url "" -Icon network_wired
             }
             New-UDSideNavItem -Text "Software Deploy" -Icon folder -Children {
                 New-UDSideNavItem -Text "Applications" -Url "cmapps" -Icon app_store
@@ -295,7 +295,9 @@ function Start-UDCmwtDashboard {
                 New-UDSideNavItem -Text "Scripts" -Url "" -Icon scroll
             }
             New-UDSideNavItem -Text "Software Updates" -Icon folder -Children {
-                New-UDSideNavItem -Text "All Updates" -Url "" -Icon stroopwafel
+                New-UDSideNavItem -Text "Summary" -Url "cmupdatesummary" -Icon stroopwafel
+                New-UDSideNavItem -Text "Compliance" -Url "cmupdatecompliance" -Icon stroopwafel
+                New-UDSideNavItem -Text "All Updates" -Url "cmupdates" -Icon stroopwafel
                 New-UDSideNavItem -Text "Update Groups" -Url "" -Icon stroopwafel
                 New-UDSideNavItem -Text "Update Packages" -Url "cmupdatepkgs" -Icon stroopwafel
                 New-UDSideNavItem -Text "ADRs" -Url "" -Icon stroopwafel
@@ -369,14 +371,16 @@ function Start-UDCmwtDashboard {
             New-UDSideNavItem -Text "Domain" -Url "addomain" -Icon mountain
             New-UDSideNavItem -Text "Computers" -Url "adcomputers" -Icon desktop
             New-UDSideNavItem -Text "Users" -Url "adusers" -Icon users
-            New-UDSideNavItem -Text "Contacts" -Url "adcontacts" -Icon address_card
+            New-UDSideNavItem -Text "Contacts" -Url "" -Icon address_card
             New-UDSideNavItem -Text "Security Groups" -Url "adgroups" -Icon users_cog
+            New-UDSideNavItem -Text "Print Queues" -Url "adprinters" -Icon print
         }
         New-UDSideNavItem -Text "Azure AD" -Icon folder -Children {
             New-UDSideNavItem -Text "Users" -Url "aadusers" -Icon users
             New-UDSideNavItem -Text "Groups" -Url "aadgroups" -Icon users_cog
             New-UDSideNavItem -Text "Devices" -Url "aadcomputers" -Icon desktop
-            New-UDSideNavItem -Text "Admin Portal" -Url "https://aad.portal.azure.com" -Icon microsoft
+            New-UDSideNavItem -Text "AAD Portal" -Url "https://aad.portal.azure.com" -Icon microsoft
+            New-UDSideNavItem -Text "AAD Devices Portal" -Url "https://devicemanagement.azure.com" -Icon desktop
         }
         New-UDSideNavItem -Text "More..." -Icon folder -Children {
             New-UDSideNavItem -Text "References" -Url "references" -Icon link
