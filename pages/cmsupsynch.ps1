@@ -1,10 +1,11 @@
-New-UDPage -Name "CMSupSynch" -Id 'cmsupsynch' -Content {
+New-UDPage -Name "cmsupsynch" -Id 'cmsupsynch' -Content {
 	New-UDGrid -Title "Configuration Manager SUP Synchronization Status" -Endpoint {
+        $qname    = "cmsupsynch.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
-        $SiteCode = $Cache:ConnectionInfo.SiteCode
-        $BasePath = $Cache:ConnectionInfo.BasePath
-        $qfile    = Join-Path $BasePath "cmqueries\cmsupsynch.sql"
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database "CM_$SiteCode" -File $qfile |
+        $Database = $Cache:ConnectionInfo.CmDatabase
+		$BasePath = $Cache:ConnectionInfo.QfilePath
+		$qfile    = Join-Path $BasePath $qname
+        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
             Out-UDGridData
     }
 }

@@ -1,11 +1,12 @@
-New-UDPage -Name "CMUpdatePkgs" -Id 'cmupdatepkgs' -Content {
+New-UDPage -Name "cmupdatepkgs" -Id 'cmupdatepkgs' -Content {
 	New-UDGrid -Title "Configuration Manager Software: Software Update Packages" -Endpoint {
+        $qname    = "cmpackages.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
-        $SiteCode = $Cache:ConnectionInfo.SiteCode
-        $BasePath = $Cache:ConnectionInfo.BasePath
-        $qfile    = Join-Path $BasePath "cmqueries\cmpackages.sql"
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database "CM_$SiteCode" -File $qfile |
-                Where-Object PackageType -eq 5 |
+        $Database = $Cache:ConnectionInfo.CmDatabase
+		$BasePath = $Cache:ConnectionInfo.QfilePath
+		$qfile    = Join-Path $BasePath $qname
+        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+			Where-Object PackageType -eq 5 |
                 Select-Object Name,PackageID,Version,Description | Out-UDGridData
     }
 }

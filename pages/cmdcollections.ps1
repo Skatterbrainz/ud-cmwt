@@ -1,10 +1,11 @@
-New-UDPage -Name "CMDCollections" -Id 'cmdcollections' -Content {
+New-UDPage -Name "cmdcollections" -Id 'cmdcollections' -Content {
 	New-UDGrid -Title "Configuration Manager Device Collections" -Endpoint {
+        $qname    = "cmdcollections.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
-        $SiteCode = $Cache:ConnectionInfo.SiteCode
-		$BasePath = $Cache:ConnectionInfo.BasePath
-		$qfile    = Join-Path $BasePath "cmqueries\cmdcollections.sql"
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database "CM_$SiteCode" -File $qfile |
-            Select Name,ID,Type,Comment,Members | Out-UDGridData
+        $Database = $Cache:ConnectionInfo.CmDatabase
+		$BasePath = $Cache:ConnectionInfo.QfilePath
+		$qfile    = Join-Path $BasePath $qname
+        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+            Select-Object Name,ID,Type,Comment,Members | Out-UDGridData
     }
 }

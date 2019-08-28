@@ -1,10 +1,11 @@
-New-UDPage -Name "CMBoundaryGroups" -Id 'cmboundarygroups' -Content {
+New-UDPage -Name "cmboundarygroups" -Id 'cmboundarygroups' -Content {
 	New-UDGrid -Title "Configuration Manager Boundary Groups" -Endpoint {
+        $qname    = "cmboundarygroups.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
-        $SiteCode = $Cache:ConnectionInfo.SiteCode
-        $BasePath = $Cache:ConnectionInfo.BasePath
-        $qfile    = Join-Path $BasePath "cmqueries\cmboundarygroups.sql"
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database "CM_$SiteCode" -File $qfile |
+        $Database = $Cache:ConnectionInfo.CmDatabase
+		$BasePath = $Cache:ConnectionInfo.QfilePath
+		$qfile    = Join-Path $BasePath $qname
+        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
             Select-Object DisplayName,BGroupID,Description,Boundaries,SiteSystems | Out-UDGridData
     }
 }

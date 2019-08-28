@@ -1,4 +1,4 @@
-﻿New-UDPage -Name "ADComputers" -Icon desktop -Content {
+﻿New-UDPage -Name "adcomputers" -Id "adcomputers" -Icon desktop -Content {
     New-UDGrid -Title "Active Directory Computers ($env:USERDNSDOMAIN)" -Endpoint {
         Get-ADSIComputer | Foreach-Object {
             $llogon = $_.LastLogon
@@ -16,7 +16,7 @@
                 Description = [string]$_.Description
                 LastLogon   = $llogon
                 DaysAgo     = $lldays
-            } 
+            }
         } | Out-UDGridData
     }
 }

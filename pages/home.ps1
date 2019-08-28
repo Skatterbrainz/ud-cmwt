@@ -23,6 +23,14 @@
                 }
             }
             New-UDRow {
+                New-UDColumn -Content {
+                    New-UDCard -Id 'card4' -Title "Compliance" -Text "Updates Compliance Summary" -Links @(New-UDLink -Url "./cmupdatecompliance" -Text "Summary")
+                }
+                New-UDColumn -Content {
+                    New-UDCard -Id 'card5' -Title "Updates" -Text "Software Updates Summary" -Links @(New-UDLink -Url "./cmupdatesummary" -Text "Summary")
+                }
+            }
+            New-UDRow {
                 New-UDHtml -Markup "<div>Host: $($env:COMPUTERNAME) `: User: $($env:USERNAME) `: Domain: $(($env:USERDNSDOMAIN).ToLower())</div>"
             }
         }
