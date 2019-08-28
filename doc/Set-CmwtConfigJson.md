@@ -91,7 +91,7 @@ Accept wildcard characters: False
 ```
 
 ### -FilePath
-Path to Configuration JSON file
+JSON configuration file path and filename
 
 ```yaml
 Type: String
