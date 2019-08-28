@@ -1,19 +1,29 @@
 # ud-cmwt
 
-CMWT built on Universal Dashboard Community Edition
+CMWT built on UniversalDashboard.Community Edition PowerShell module.
 
-* Note: This is not yet a published module.
-* Download/Extract/Import-Module required for now.
 
 ## Requirements
 
 * PowerShell module: UniversalDashboard.Community (2.5.3 or later)
-* PowerShell module: DbaTools (1.0 or later)
-* PowerShell module: AdsiPS (1.0.0.7 or later)
 * Windows 7 or later with PowerShell 5.1 or later
 * Admin access to a Configuration Manager Current Branch site (on-prem, same AD domain)
 * Admin access to the SQL Server instance for the ConfigMgr site
 * Admin or User Admin access to an AzureAD tenant/subscription
+
+## Installation / Setup
+
+* Open a PowerShell console (Run as Administrator) - Install the module
+* Run the ```Set-CmwtConfigJson``` function to configure base settings.
+* Run the ```Export-CmwtCredential``` function to store your AzureAD/Office365 credentials.
+* Run the ```Start-UDCmwtDashboard``` function to start the web service.
+* Open your browser and open "http://localhost:XXXX" (where XXXX is your chosen port number).
+* Gaze in awe. Make jokes. Bitch and moan. Scoff and ridicule.  Submit feedback!
+
+## Removal (In case you don't like it)
+
+* Open a PowerShell console (Run as Administrator) - ```Uninstall-Module ud-cmwt```
+* Delete the leftover .json configuration and credential files.
 
 ## Examples
 
