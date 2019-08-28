@@ -1,4 +1,4 @@
-New-UDPage -Name "CMSummary" -Id 'cmsummary' -Content {
+New-UDPage -Name "cmsummary" -Id 'cmsummary' -Content {
     New-UDCard -Id 'card1' -Title "Site Information" -Horizontal -Content {""}
     New-UDCard -Content {
         New-UDRow {

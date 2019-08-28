@@ -1,4 +1,4 @@
-New-UDPage -Name "ADSummary" -Id 'adsummary' -Content {
+New-UDPage -Name "adsummary" -Id 'adsummary' -Content {
     New-UDCard -Title "Active Directory Summary: $($env:USERDNSDOMAIN)" -Content {""}
     New-UDTable -Title "Objects Summary" -Header @("Name", "Count") -Endpoint {
         $computers = $(Get-ADSIComputer).Count

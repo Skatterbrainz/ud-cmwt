@@ -1,4 +1,4 @@
-﻿New-UDPage -Name "About" -Icon info -Content {
+﻿New-UDPage -Name "about" -Id "about" -Icon info -Content {
     New-UDCard -Title "About $($Cache:CMWT.AppName) $($Cache:CMWT.AppVersion)" -Content {
         New-UDRow {
             New-UDParagraph -Text "This project is still in early development. Check back often."

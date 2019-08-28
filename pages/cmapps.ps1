@@ -1,4 +1,4 @@
-﻿New-UDPage -Name "CMApps" -Id 'cmapps' -Content {
+﻿New-UDPage -Name "cmapps" -Id 'cmapps' -Content {
 	New-UDGrid -Title "Configuration Manager Software: Applications" -Endpoint {
         $qname    = "cmpackages.sql"
         $SiteHost = $Cache:ConnectionInfo.Server

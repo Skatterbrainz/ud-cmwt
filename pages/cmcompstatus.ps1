@@ -1,5 +1,5 @@
 New-UDPage -Name "cmcompstatus" -Id 'cmcompstatus' -Content {
-	New-UDGrid -Id 'grid1' -Title "Configuration Manager Component Status" -Endpoint {
+	New-UDGrid -Title "Configuration Manager Component Status" -Endpoint {
         $qname    = "cmcompstatus.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
         $Database = $Cache:ConnectionInfo.CmDatabase

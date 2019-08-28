@@ -1,7 +1,7 @@
-﻿New-UDPage -Name "AADUsers" -Icon users -Content {
+﻿New-UDPage -Name "aadusers" -Id "aadusers" -Icon users -Content {
     New-UDGrid -Title "Azure AD Users ($($Cache:CMWT.AzDomain))" -Endpoint {
-        $azcred = $([pscredential]$Cache:ConnectionInfo.Credential)
-        Connect-MsolService -Credential $azcred -AzureEnvironment AzureCloud
-        Get-MsolUser -All | Select DisplayName,Department,Title,City,State | Out-UDGridData
+		$Credential = $Cache:ConnectionInfo.Credential
+        Connect-MsolService -Credential $Credential -AzureEnvironment AzureCloud
+        Get-MsolUser -All | Select-Object DisplayName,Department,Title,City,State | Out-UDGridData
     }
 }

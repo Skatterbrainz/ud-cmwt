@@ -6,7 +6,7 @@ New-UDPage -Name "cmadmins" -Icon app_store -Content {
 		$BasePath = $Cache:ConnectionInfo.QfilePath
 		$qfile    = Join-Path $BasePath $qname
         Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
-            Select UserName,RoleName,DisplayName,AccountType | Out-UDGridData
+            Select-Object UserName,RoleName,DisplayName,AccountType | Out-UDGridData
     }
     New-UDRow {
         New-UDParagraph -Text "$SiteHost $Database $qfile"
