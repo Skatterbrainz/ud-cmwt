@@ -7,7 +7,6 @@ New-UDPage -Name "cmsummary" -Id 'cmsummary' -Content {
             $siteinfo = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_Site"
             $devices  = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_r_system"
             $users    = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_r_user"
-            $models   = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select distinct Manufacturer0,Model0,COUNT(*) as Qty from v_gs_computer_system group by Manufacturer0,Model0 order by Manufacturer0,Model0"
             $pkgs     = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_package"
 
             New-UDHtml -Markup "<table id=table1 style='width:100%'>
@@ -23,8 +22,21 @@ New-UDPage -Name "cmsummary" -Id 'cmsummary' -Content {
     <tr><td>Devices</td><td>$($devices.Count)</td></tr>
     <tr><td>Users</td><td>$($users.Count)</td></tr>
     <tr><td>Software Packages</td><td>$($pkgs.Count)</td></tr>
-    <tr><td>Models</td><td>$($models.Count)</td></tr>
     </table></td></tr></table>"
+        }
+        New-UDRow {
+            New-UDTable -Title "Computer Models" -Header @("Manufacturer","ModelName","Devices") -Endpoint {
+                $SiteHost = $Cache:ConnectionInfo.Server
+                $Database = $Cache:ConnectionInfo.CmDatabase
+                $models   = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select distinct Manufacturer0,Model0,COUNT(*) as Qty from v_gs_computer_system group by Manufacturer0,Model0 order by Manufacturer0,Model0"
+                $models | ForEach-Object {
+                    [pscustomobject]@{
+                        Manufacturer = [string]$_.Manufacturer0
+                        ModelName    = [string]$_.Model0
+                        Devices      = [int]$_.Qty
+                    }
+                } | Out-UDTableData -Property @("Manufacturer","ModelName", "Devices")
+            }
         }
     }
 }
