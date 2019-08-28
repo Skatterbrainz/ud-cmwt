@@ -1,4 +1,4 @@
-﻿New-UDPage -Name "References" -Content {
+﻿New-UDPage -Name "references" -Id "references" -Content {
     New-UDCard -Title "References and Resources" -Content {
         New-UDRow -Columns {
             New-UDColumn -Content {

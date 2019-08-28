@@ -1,10 +1,11 @@
-New-UDPage -Name "SQLIndexFrag" -Id 'sqlindexfrag' -Content {
-    New-UDGrid -Title "SQL Server Index Fragmentation: $($Cache:ConnectionInfo.Server)" -Endpoint {
+New-UDPage -Name "sqlindexfrag" -Id 'sqlindexfrag' -Content {
+    New-UDGrid -Title "SQL Server Index Fragmentation" -Endpoint {
+        $qname    = "sqlindexfrag.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
-        $SiteCode = $Cache:ConnectionInfo.SiteCode
-        $BasePath = $Cache:ConnectionInfo.BasePath
-        $qfile    = Join-Path $BasePath "cmqueries\sqlindexfrag.sql"
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database "CM_$SiteCode" -File $qfile |
+        $Database = $Cache:ConnectionInfo.CmDatabase
+		$BasePath = $Cache:ConnectionInfo.QfilePath
+		$qfile    = Join-Path $BasePath $qname
+        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
             Select-Object IndexName,IndexID,IndexType,AvgFragPct,AvgSpaceUsedPct,PageCount | Out-UDGridData
     }
 }

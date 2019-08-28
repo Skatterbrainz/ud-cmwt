@@ -1,11 +1,12 @@
-﻿New-UDPage -Name "CMOSImages" -Id 'cmosimages' -Content {
+﻿New-UDPage -Name "cmosimages" -Id 'cmosimages' -Content {
 	New-UDGrid -Title "Configuration Manager Software: OS Images" -Endpoint {
+        $qname    = "cmpackages.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
-        $SiteCode = $Cache:ConnectionInfo.SiteCode
-        $BasePath = $Cache:ConnectionInfo.BasePath
-        $qfile    = Join-Path $BasePath "cmqueries\cmpackages.sql"
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database "CM_$SiteCode" -File $qfile |
-                Where-Object PackageType -eq 257 |
-                Select-Object Name,PackageID,Version,Description | Out-UDGridData
+        $Database = $Cache:ConnectionInfo.CmDatabase
+		$BasePath = $Cache:ConnectionInfo.QfilePath
+		$qfile    = Join-Path $BasePath $qname
+		Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+			Where-Object PackageType -eq 257 |
+				Select-Object Name,PackageID,Version,Description | Out-UDGridData
     }
 }
