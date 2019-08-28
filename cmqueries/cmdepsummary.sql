@@ -1,11 +1,7 @@
 select distinct
     SoftwareName,
-    AssignmentID,
     CollectionName,
     CollectionID,
-    DeploymentTime,
-    CreationTime,
-    ModificationTime,
     case
         when (featuretype = 1) then 'Application'
         when (featuretype = 2) then 'Program'
@@ -20,24 +16,14 @@ select distinct
         when (featuretype = 11) then 'ConfigurationPolicy'
         when (featuretype = 28) then 'AbstractConfigurationItem'
     end as FeatureType,
-    SummaryType,
-    case
-        when (DeploymentIntent = 1) then 'Install'
-        when (DeploymentIntent = 2) then 'Uninstall'
-        when (DeploymentIntent = 3) then 'Preflight'
-        end as DeployIntent,
-    EnforcementDeadline,
     NumberTotal as Total,
     NumberSuccess as Success,
     NumberErrors as Failed,
     NumberInProgress as InProgress,
     NumberUnknown as Unknown,
-    NumberOther as Other,
-    SummarizationTime,
-    ProgramName,
-    PackageID
+    NumberOther as Other
 from
-    dbo.vDeploymentSummary
+    vDeploymentSummary
 where
     RTRIM(SoftwareName) <> ''
 order by

@@ -1,10 +1,14 @@
-New-UDPage -Name "CMAdmins" -Icon app_store -Content {
+New-UDPage -Name "cmadmins" -Icon app_store -Content {
 	New-UDGrid -Title "Configuration Manager Site Administrators" -Endpoint {
+        $qname    = "cmadmins.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
-        $SiteCode = $Cache:ConnectionInfo.SiteCode
-        $BasePath = $Cache:ConnectionInfo.BasePath
-        $qfile    = Join-Path $BasePath "cmqueries\cmusers.sql"
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database "CM_$SiteCode" -File $qfile |
-            Out-UDGridData
+        $Database = $Cache:ConnectionInfo.CmDatabase
+		$BasePath = $Cache:ConnectionInfo.QfilePath
+		$qfile    = Join-Path $BasePath $qname
+        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+            Select UserName,RoleName,DisplayName,AccountType | Out-UDGridData
+    }
+    New-UDRow {
+        New-UDParagraph -Text "$SiteHost $Database $qfile"
     }
 }

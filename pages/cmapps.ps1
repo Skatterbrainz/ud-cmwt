@@ -1,10 +1,11 @@
 ﻿New-UDPage -Name "CMApps" -Id 'cmapps' -Content {
 	New-UDGrid -Title "Configuration Manager Software: Applications" -Endpoint {
+        $qname    = "cmpackages.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
-        $SiteCode = $Cache:ConnectionInfo.SiteCode
-        $BasePath = $Cache:ConnectionInfo.BasePath
-        $qfile    = Join-Path $BasePath "cmqueries\cmpackages.sql"
-		Invoke-DbaQuery -SqlInstance $SiteHost -Database "CM_$SiteCode" -File $qfile |
+        $Database = $Cache:ConnectionInfo.CmDatabase
+		$BasePath = $Cache:ConnectionInfo.QfilePath
+		$qfile    = Join-Path $BasePath $qname
+		Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
 			Where-Object PackageType -eq 8 |
 	           	Select-Object Name,PackageID,Version,Description | Out-UDGridData
     }

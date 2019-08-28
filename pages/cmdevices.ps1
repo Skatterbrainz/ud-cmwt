@@ -1,10 +1,19 @@
-﻿New-UDPage -Name "CMDevices" -Id 'cmdevices' -Content {
+﻿New-UDPage -Name "cmdevices" -Id 'cmdevices' -Content {
 	New-UDGrid -Title "Configuration Manager Devices" -Endpoint {
+        $qname    = "cmdevices.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
-        $SiteCode = $Cache:ConnectionInfo.SiteCode
-        $BasePath = $Cache:ConnectionInfo.BasePath
-        $qfile    = Join-Path $BasePath "cmqueries\cmusers.sql"
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database "CM_$SiteCode" -File $qfile |
-            Select-Object Name,OSName,OSBuild,Client,ADSiteName,Model | Out-UDGridData
+        $Database = $Cache:ConnectionInfo.CmDatabase
+		$BasePath = $Cache:ConnectionInfo.QfilePath
+		$qfile    = Join-Path $BasePath $qname
+        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile | Foreach-Object {
+            [pscustomobject]@{
+                Name    = [string]$_.Name
+                OSName  = [string]$_.OSName
+                OSBuild = [string]$_.OSBuild
+                Client  = [string]$_.ClientVersion
+                ADSite  = [string]$_.ADSiteName
+                Model   = [string]$_.Model
+            }
+        } | Out-UDGridData
     }
 }
