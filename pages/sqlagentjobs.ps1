@@ -1,7 +1,6 @@
 ﻿New-UDPage -Name "sqlagentjobs" -Id 'sqlagentjobs' -Content {
-    $SiteHost = $Cache:ConnectionInfo.Server
-    New-UDGrid -Title "SQL Agent Jobs: $SiteHost" -Endpoint {
-        Get-DbaAgentJob -SqlInstance $SiteHost | Foreach-Object {
+    New-UDGrid -Title "SQL Agent Jobs: $($Cache:ConnectionInfo.Server)" -Endpoint {
+        Get-DbaAgentJob -SqlInstance $Cache:ConnectionInfo.Server | Foreach-Object {
             [pscustomobject]@{
                 Name          = [string]$_.Name
                 Owner         = [string]$_.OwnerLoginName

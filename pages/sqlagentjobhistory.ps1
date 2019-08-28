@@ -1,4 +1,4 @@
-New-UDPage -Name "SQLAgentJobHistory" -Id 'sqlagentjobhistory' -Content {
+New-UDPage -Name "sqlagentjobhistory" -Id 'sqlagentjobhistory' -Content {
     New-UDGrid -Title "SQL Server Agent Job History: $($Cache:ConnectionInfo.Server)" -Endpoint {
         Get-DbaAgentJobHistory -SqlInstance $Cache:ConnectionInfo.Server |
             Sort-Object End -Descending | Foreach-Object {

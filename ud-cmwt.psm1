@@ -345,25 +345,26 @@ function Start-UDCmwtDashboard {
                 New-UDSideNavItem -Text "$SiteCode - Deployments" -Url "cmdepsummary" -Icon medkit
                 New-UDSideNavItem -Text "SUP Synch Status" -Url "cmsupsynch" -Icon medkit
             }
-            New-UDSideNavItem -Text "$SiteCode SQL Server" -Icon folder -Children {
-                New-UDSideNavItem -Text "SQL Version" -Url "sqlserverinfo" -Icon database
-                New-UDSideNavItem -Text "Database Files" -Url "sqlfiles" -Icon database
-                New-UDSideNavItem -Text "SQL Agent Jobs" -Url "sqlagentjobs" -Icon database
-                New-UDSideNavItem -Text "Status" -Icon folder -Children {
-                    New-UDSideNavItem -Text "SQL Agent Job History" -Url "sqlagentjobhistory" -Icon search_location
-                    New-UDSideNavItem -Text "Backup History" -Url "sqlbackuphistory" -Icon search_location
-                    New-UDSideNavItem -Text "SPN Registrations" -Url "sqlspn" -Icon search_location
-                }
-                New-UDSideNavItem -Text "Performance" -Icon folder -Children {
-                    New-UDSideNavItem -Text "Memory Usage" -Url "sqlmem" -Icon search_location
-                    New-UDSideNavItem -Text "Fragmentation" -Url "sqlindexfrag" -Icon search_location
-                }
-                New-UDSideNavItem -Text "CM_$SiteCode Database" -Icon folder -Children {
-                    New-UDSideNavItem -Text "Views" -Url "dbviews" -Icon table
-                    New-UDSideNavItem -Text "Tables" -Url "dbtables" -Icon table
-                }
-            }
         } # configmgr
+        New-UDSideNavItem -Text "$SiteCode SQL Server" -Icon folder -Children {
+            New-UDSideNavItem -Text "SQL Version" -Url "sqlserverinfo" -Icon database
+            New-UDSideNavItem -Text "Database Files" -Url "sqlfiles" -Icon database
+            New-UDSideNavItem -Text "SQL Agent Jobs" -Url "sqlagentjobs" -Icon database
+            New-UDSideNavItem -Text "Status" -Icon folder -Children {
+                New-UDSideNavItem -Text "SQL Services" -Url "sqlservices" -Icon servicestack
+                New-UDSideNavItem -Text "SQL Agent Job History" -Url "sqlagentjobhistory" -Icon search_location
+                New-UDSideNavItem -Text "Backup History" -Url "sqlbackuphistory" -Icon search_location
+                New-UDSideNavItem -Text "SPN Registrations" -Url "sqlspn" -Icon search_location
+            }
+            New-UDSideNavItem -Text "Performance" -Icon folder -Children {
+                New-UDSideNavItem -Text "Memory Usage" -Url "sqlmem" -Icon search_location
+                New-UDSideNavItem -Text "Fragmentation" -Url "sqlindexfrag" -Icon search_location
+            }
+            New-UDSideNavItem -Text "CM_$SiteCode Database" -Icon folder -Children {
+                New-UDSideNavItem -Text "Views" -Url "dbviews" -Icon table
+                New-UDSideNavItem -Text "Tables" -Url "dbtables" -Icon table
+            }
+        }
         New-UDSideNavItem -Text "Active Directory" -Icon folder -Children {
             New-UDSideNavItem -Text "Domain" -Url "addomain" -Icon mountain
             New-UDSideNavItem -Text "Computers" -Url "adcomputers" -Icon desktop
