@@ -1,10 +1,11 @@
-﻿New-UDPage -Name "CMUCollections" -Id 'cmucollections' -Content {
+﻿New-UDPage -Name "cmucollections" -Id 'cmucollections' -Content {
 	New-UDGrid -Title "Configuration Manager User Collections" -Endpoint {
+        $qname    = "cmucollections.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
-        $SiteCode = $Cache:ConnectionInfo.SiteCode
-        $BasePath = $Cache:ConnectionInfo.BasePath
-        $qfile    = Join-Path $BasePath "cmqueries\cmucollections.sql"
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database "CM_$SiteCode" -File $qfile |
-            Select Name,ID,Comment,Members | Out-UDGridData
+        $Database = $Cache:ConnectionInfo.CmDatabase
+		$BasePath = $Cache:ConnectionInfo.QfilePath
+		$qfile    = Join-Path $BasePath $qname
+        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+            Select-Object Name,ID,Comment,Members | Out-UDGridData
     }
 }
