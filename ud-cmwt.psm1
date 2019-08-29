@@ -313,10 +313,10 @@ function Start-UDCmwtDashboard {
                 New-UDSideNavItem -Text "VHD Packages" -Url "cmvhdpkgs" -Icon gears
             }
             New-UDSideNavItem -Text "Hardware Inventory" -Icon folder -Children {
-                New-UDSideNavItem -Text "Group: Models" -Url "" -Icon desktop
-                New-UDSideNavItem -Text "Group: DHCP Servers" -Url "" -Icon network_wired
-                New-UDSideNavItem -Text "Group: IP Subnet" -Url "" -Icon network_wired
-                New-UDSideNavItem -Text "Group: AD Site" -Url "" -Icon network_wired
+                New-UDSideNavItem -Text "Group: Models" -Url "cmhwmodels" -Icon desktop
+                New-UDSideNavItem -Text "Group: DHCP Servers" -Url "cmhwdhcp" -Icon network_wired
+                New-UDSideNavItem -Text "Group: IP Gateways" -Url "cmhwgateways" -Icon network_wired
+                New-UDSideNavItem -Text "Group: AD Site" -Url "cmhwadsites" -Icon network_wired
                 New-UDSideNavItem -Text "Exceptions" -Icon folder -Children {
                     New-UDSideNavItem -Text "Low Disk Space" -Url "" -Icon thermometer
                     New-UDSideNavItem -Text "Old Inventory" -Url "" -Icon clock
@@ -348,7 +348,7 @@ function Start-UDCmwtDashboard {
                 New-UDSideNavItem -Text "SUP Synch Status" -Url "cmsupsynch" -Icon medkit
             }
         } # configmgr
-        New-UDSideNavItem -Text "$SiteCode SQL Server" -Icon folder -Children {
+        New-UDSideNavItem -Text "SQL Server ($SiteCode)" -Icon folder -Children {
             New-UDSideNavItem -Text "SQL Version" -Url "sqlserverinfo" -Icon database
             New-UDSideNavItem -Text "Database Files" -Url "sqlfiles" -Icon database
             New-UDSideNavItem -Text "SQL Agent Jobs" -Url "sqlagentjobs" -Icon database
@@ -379,14 +379,14 @@ function Start-UDCmwtDashboard {
             New-UDSideNavItem -Text "Users" -Url "aadusers" -Icon users
             New-UDSideNavItem -Text "Groups" -Url "aadgroups" -Icon users_cog
             New-UDSideNavItem -Text "Devices" -Url "aadcomputers" -Icon desktop
-            New-UDSideNavItem -Text "AAD Portal" -Url "https://aad.portal.azure.com" -Icon microsoft
-            New-UDSideNavItem -Text "AAD Devices Portal" -Url "https://devicemanagement.azure.com" -Icon desktop
+            New-UDSideNavItem -Text "AAD Portal" -OnClick { Invoke-UDRedirect -Url "https://aad.portal.azure.com" -OpenInNewWindow } -Icon microsoft
+            New-UDSideNavItem -Text "AAD Devices Portal" -OnClick { Invoke-UDRedirect -Url "https://devicemanagement.azure.com" -OpenInNewWindow } -Icon desktop
         }
         New-UDSideNavItem -Text "More..." -Icon folder -Children {
             New-UDSideNavItem -Text "References" -Url "references" -Icon link
-            New-UDSideNavItem -Text "UD Documentation" -Url "https://docs.universaldashboard.io/" -Icon link
+            New-UDSideNavItem -Text "UD Documentation" -OnClick { Invoke-UDRedirect -Url "https://docs.universaldashboard.io/" -OpenInNewWindow } -Icon link
             New-UDSideNavItem -Text "System Info" -Url "cmwtinfo" -Icon search_plus
-            New-UDSideNavItem -Text "Send Feedback" -Url "https://github.com/Skatterbrainz/ud-cmwt/issues" -Icon comment
+            New-UDSideNavItem -Text "Send Feedback" -OnClick { Invoke-UDRedirect -Url "https://github.com/Skatterbrainz/ud-cmwt/issues" -OpenInNewWindow } -Icon comment
         }
         New-UDSideNavItem -Text "About" -Url "About" -Icon info_circle
     }
