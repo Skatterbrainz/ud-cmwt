@@ -6,8 +6,11 @@
 		$BasePath = $Cache:ConnectionInfo.QfilePath
 		$qfile    = Join-Path $BasePath $qname
         Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile | Foreach-Object {
+            $resid = [string]$_.ResourceID
+            $name  = [string]$_.Name
             [pscustomobject]@{
-                Name    = [string]$_.Name
+                Name    = New-UDElement -Tag "a" -Attributes @{ href="/cmdevice/$resid"} -Content { $name }
+                ResourceID = $resid
                 OSName  = [string]$_.OSName
                 OSBuild = [string]$_.OSBuild
                 Client  = [string]$_.ClientVersion
