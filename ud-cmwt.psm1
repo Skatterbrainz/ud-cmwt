@@ -283,9 +283,9 @@ function Start-UDCmwtDashboard {
             New-UDSideNavItem -Text "Site Summary" -Url "cmsummary" -Icon database
             New-UDSideNavItem -Text "Assets" -Icon folder -Children {
                 New-UDSideNavItem -Text "Devices" -Url "cmdevices" -Icon desktop
-                New-UDSideNavItem -Text "Device Collections" -Url "cmdcollections" -Icon desktop
+                New-UDSideNavItem -Text "Device Collections" -Url "cmcollections/2" -Icon desktop
                 New-UDSideNavItem -Text "Users" -Url "cmusers" -Icon user
-                New-UDSideNavItem -Text "User Collections" -Url "cmucollections" -Icon users
+                New-UDSideNavItem -Text "User Collections" -Url "cmcollections/1" -Icon users
                 New-UDSideNavItem -Text "Orchestration Groups" -Url "" -Icon network_wired
             }
             New-UDSideNavItem -Text "Software Deploy" -Icon folder -Children {
@@ -303,7 +303,7 @@ function Start-UDCmwtDashboard {
                 New-UDSideNavItem -Text "ADRs" -Url "" -Icon stroopwafel
                 New-UDSideNavItem -Text "3rd Party Catalogs" -Url "" -Icon stroopwafel
             }
-            New-UDSideNavItem -Text "OS Deploy" -Icon folder -Children {
+            New-UDSideNavItem -Text "Operating Systems" -Icon folder -Children {
                 New-UDSideNavItem -Text "OS Images" -Url "cmosimages" -Icon windows
                 New-UDSideNavItem -Text "OS Upgrades" -Url "cmosupgrades" -Icon windows
                 New-UDSideNavItem -Text "Drivers" -Url "" -Icon usb
@@ -324,8 +324,8 @@ function Start-UDCmwtDashboard {
             }
             New-UDSideNavItem -Text "Software Inventory" -Icon folder -Children {
                 New-UDSideNavItem -Text "Installed Software" -Url "cmswinventory" -Icon file_contract
-                New-UDSideNavItem -Text "Operating Systems" -Url "" -Icon file_alt
-                New-UDSideNavItem -Text "Installed Hotfixes" -Url "" -Icon file_contract
+                New-UDSideNavItem -Text "Operating Systems" -Url "cmosversions" -Icon file_alt
+                New-UDSideNavItem -Text "Installed Hotfixes" -Url "cmhotfixes" -Icon file_contract
             }
             New-UDSideNavItem -Text "Administration" -Icon folder -Children {
                 New-UDSideNavItem -Text "Discovery Methods" -Url "" -Icon search
