@@ -1,5 +1,5 @@
 SELECT
-    cm.Name AS ComputeName,
+    cm.Name AS ComputerName,
     cm.ResourceID,
     cm.CollectionID,
     sys.Client_Version0 AS ClientVersion,

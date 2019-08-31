@@ -48,7 +48,7 @@ New-UDPage -Url "/cmcollection/:collid/:tabnum" -Endpoint {
                             $resid = [string]$_.ResourceID
                             $name  = [string]$_.ComputerName
                             [pscustomobject]@{
-                                Name          = New-UDElement -Tag "a" -Attributes @{ href="/cmdevice/$resid"} -Content { $name }
+                                Name          = New-UDElement -Tag "a" -Attributes @{ href="/cmdevice/$resid/1"} -Content { $name }
                                 ClientVersion = [string]$_.ClientVersion
                                 Model         = [string]$_.Model
                                 OSName        = [string]$_.OSName
