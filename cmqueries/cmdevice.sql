@@ -17,8 +17,7 @@ SELECT DISTINCT
     se.ChassisTypes0 AS ChassisType,
     ws.LastHealthEvaluationResult as LastHealthEval,
     ws.SystemType,
-    cs.NumberOfProcessors0 AS Processors,
-    pm.Capacity0 AS TotalMemoryMB
+    cs.NumberOfProcessors0 AS Processors
 FROM
     v_R_System AS sys LEFT OUTER JOIN
     v_GS_PHYSICAL_MEMORY AS pm ON sys.ResourceID = pm.ResourceID LEFT OUTER JOIN

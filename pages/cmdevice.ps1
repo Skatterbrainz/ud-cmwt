@@ -55,7 +55,6 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
                         [pscustomobject]@{ property = "LastHealthEval"; value = [string]$cdata.LastHealthEval }
                         [pscustomobject]@{ property = "SystemType"; value = [string]$cdata.SystemType }
                         [pscustomobject]@{ property = "Processors"; value = [string]$cdata.Processors }
-                        [pscustomobject]@{ property = "TotalMemoryMB"; value = [string]$cdata.TotalMemoryMB }
                     )
                     $Data | Out-UDTableData -Property @("Property", "Value")
                 }
