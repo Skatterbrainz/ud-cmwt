@@ -323,8 +323,8 @@ function Start-UDCmwtDashboard {
                 }
             }
             New-UDSideNavItem -Text "Software Inventory" -Icon folder -Children {
-                New-UDSideNavItem -Text "Installed Software" -Url "cmswinventory" -Icon file_contract
-                New-UDSideNavItem -Text "Operating Systems" -Url "cmosversions" -Icon file_alt
+                New-UDSideNavItem -Text "Installed Software" -Url "cmarpcounts" -Icon file_contract
+                New-UDSideNavItem -Text "Operating Systems" -Url "cmoscounts" -Icon file_alt
                 New-UDSideNavItem -Text "Installed Hotfixes" -Url "cmhotfixes" -Icon file_contract
             }
             New-UDSideNavItem -Text "Administration" -Icon folder -Children {

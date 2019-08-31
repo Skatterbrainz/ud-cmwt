@@ -9,7 +9,7 @@
             $resid = [string]$_.ResourceID
             $name  = [string]$_.Name
             [pscustomobject]@{
-                Name    = New-UDElement -Tag "a" -Attributes @{ href="/cmdevice/$resid"} -Content { $name }
+                Name    = New-UDElement -Tag "a" -Attributes @{ href="/cmdevice/$resid" } -Content { $name }
                 ResourceID = $resid
                 OSName  = [string]$_.OSName
                 OSBuild = [string]$_.OSBuild

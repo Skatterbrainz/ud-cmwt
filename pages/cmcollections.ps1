@@ -13,7 +13,7 @@ New-UDPage -Url "/cmcollections/:type" -Endpoint {
             $cid = [string]$_.ID
             [pscustomobject]@{
                 Name    = [string]$_.Name
-                ID      = New-UDElement -Tag "a" -Attributes @{ href="/cmcollection/$cid"} -Content { $cid }
+                ID      = New-UDElement -Tag "a" -Attributes @{ href="cmcollection/$cid/1"} -Content { $cid }
                 Comment = [string]$_.Comment
                 Members = [int]$_.Members
             }
