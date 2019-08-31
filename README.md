@@ -1,15 +1,16 @@
 # ud-cmwt
 
-CMWT built on UniversalDashboard.Community Edition PowerShell module.
+CMWT built on [UniversalDashboard](https://universaldashboard.io/) Community Edition, PowerShell module.
 
 
 ## Requirements
 
-* PowerShell module: UniversalDashboard.Community (2.5.3 or later)
+* PowerShell module: [UniversalDashboard.Community](https://universaldashboard.io/) (2.5.3 or later)
 * Windows 7 or later with PowerShell 5.1 or later
-* Admin access to a Configuration Manager Current Branch site (on-prem, same AD domain)
-* Admin access to the SQL Server instance for the ConfigMgr site
-* Admin or User Admin access to an AzureAD tenant/subscription
+* Permissions/Rights:
+  * Full Administrator rights to a Configuration Manager Current Branch site (on-prem, same AD domain)
+  * Server or System Administrator rights to the SQL Server instance for the ConfigMgr site
+  * Admin or User Admin access to an AzureAD tenant/subscription
 
 ## Installation / Setup
 
@@ -52,4 +53,12 @@ Launch CMWT
 Start-UDCmwtDashboard
 ```
 
-Refer to the [docs](https://github.com/Skatterbrainz/ud-cmwt/tree/master/doc) folder of this repositor for function examples and details.
+## More Information
+
+* Refer to the [docs](https://github.com/Skatterbrainz/ud-cmwt/tree/master/doc) folder of this repositor for function examples and details.
+* Click on the [Wiki](https://github.com/Skatterbrainz/ud-cmwt/wiki) link for more information about this project and how it can be used.
+
+## Support and Feedback
+
+* Please use the [Issues](https://github.com/Skatterbrainz/ud-cmwt/issues) link above to submit any features you'd like to see added or improved in CMWT, or to submit a bug report.
+* Visit the [UniversalDashboard Forums](https://forums.universaldashboard.io) for support and information about UniversalDashboard (Enterprise and Community Editions)
