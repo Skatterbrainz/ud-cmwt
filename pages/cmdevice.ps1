@@ -70,7 +70,8 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
                         Where-Object {$_.ResourceID -eq $resourceid} | Out-UDGridData
                 }
                 New-UDGrid -Title "$resourceid - Processors" -Endpoint {
-                    Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_GS_SYSTEM_ENCLOSURE where resourceid=$resid" |
+                    $qfile = Join-Path $BasePath "cmprocessors.sql"
+                    Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
                         Where-Object {$_.ResourceID -eq $resourceid} | Out-UDGridData
                 }
             }
