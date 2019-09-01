@@ -156,6 +156,40 @@ function Get-CmwtConfigJson {
 
 <#
 .SYNOPSIS
+    Return SQL query results
+.DESCRIPTION
+    Return results of SQL query against CM database using queryname as filename
+.PARAMETER QueryName
+    Base name of SQL file to import (without extension)
+.EXAMPLE
+    $devices = Get-CmWtDbQuery -QueryName "cmdevices"
+#>
+
+function Get-CmwtDbQuery {
+    [CmdletBinding()]
+    param (
+        [parameter(Mandatory)] [ValidateNotNullOrEmpty()] [string] $QueryName
+    )
+    try {
+        Write-Verbose "get-cmwtquery: connecting to database"
+        $SiteHost = $Cache:ConnectionInfo.Server
+        $Database = $Cache:ConnectionInfo.CmDatabase
+        $BasePath = $Cache:ConnectionInfo.QfilePath
+        $qfile    = Join-Path $BasePath $QueryName
+        if (Test-Path $qfile) {
+            @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile)
+        }
+        else {
+            Throw "Query file not found: $qfile"
+        }
+    }
+    catch {
+        Write-Error $Error[0].Exception.Message
+    }
+}
+
+<#
+.SYNOPSIS
     Launch CMWT UniversalDashboard instance
 .DESCRIPTION
     Ummmmm, yeah, I just said that.
