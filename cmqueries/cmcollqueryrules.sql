@@ -8,4 +8,4 @@ SELECT DISTINCT
     crq.LimitToCollectionID
 FROM
     v_Collection AS coll INNER JOIN
-    dbo.v_CollectionRuleQuery AS crq ON coll.CollectionID = crq.CollectionID
+    v_CollectionRuleQuery AS crq ON coll.CollectionID = crq.CollectionID
