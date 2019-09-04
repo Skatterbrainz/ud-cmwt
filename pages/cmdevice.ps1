@@ -11,8 +11,14 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
     $SiteHost = $Cache:ConnectionInfo.Server
     $Database = $Cache:ConnectionInfo.CmDatabase
     $BasePath = $Cache:ConnectionInfo.QfilePath
-    $qfile    = Join-Path $BasePath $qname
-    $compname = (Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select name0 from v_r_system where resourceid=$resourceid")[0].Name0
+    $compdata = @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File (Join-Path $BasePath "cmdevicename.sql") |
+        Where-Object {$_.ResourceID -eq $resourceid} )
+    if ($compdata.Count -gt 0) {
+        $compname = [string]$compdata[0].ComputerName
+    }
+    else {
+        $compname = "Unknown"
+    }
     New-UDRow {
         New-UDButton -Id 'b1' -Text "General" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/1" } -Flat
         New-UDButton -Id 'b2' -Text "Hardware" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/2" } -Flat
@@ -25,6 +31,7 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
         switch ($tabnum) {
             1 {
                 New-UDTable -Title "$compname - General" -Headers @("Property","Value") -Endpoint {
+                    $qfile = Join-Path $BasePath "cmdevice.sql"
                     $cdata = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
                         Where-Object {$_.ResourceID -eq $resourceid} | Select-Object -First 1
                     $mfr     = $cdata.Manufacturer
@@ -62,38 +69,62 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
             }
             2 {
                 # hardware inventory
-                New-UDCard -Title "$resourceid - Hardware" -Content {""}
-                # $cs = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_GS_COMPUTER_SYSTEM where resourceid=$resid"
-                New-UDGrid -Title "$resourceid - Logical Disks" -Endpoint {
-                    $qfile = Join-Path $BasePath "cmlogicaldisks.sql"
-                    Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
-                        Where-Object {$_.ResourceID -eq $resourceid} | Out-UDGridData
+                #$cs = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_GS_COMPUTER_SYSTEM where resourceid=$resid"
+                New-UDGrid -Title "$compname - Hardware" -Endpoint {
+                    $qfile = ""
                 }
-                New-UDGrid -Title "$resourceid - Processors" -Endpoint {
+                New-UDGrid -Title "$compname - Logical Disks" -Endpoint {
+                    $qfile = Join-Path $BasePath "cmlogicaldisks.sql"
+                    $dataset = $null
+                    $dataset = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+                        Where-Object {$_.ResourceID -eq $resourceid} |
+                            Select-Object Drive,Label,Description,Size,FreeSpace,Used,FileSystem,SerialNum
+                    $dataset | Out-UDGridData
+                }
+                New-UDGrid -Title "$compname - Processors" -Endpoint {
                     $qfile = Join-Path $BasePath "cmprocessors.sql"
-                    Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
-                        Where-Object {$_.ResourceID -eq $resourceid} | Out-UDGridData
+                    $dataset = $null
+                    $dataset = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+                        Where-Object {$_.ResourceID -eq $resourceid} |
+                            Select-Object Name,Manufacturer,Bits,MaxClock,Cores,LogicalProcs,VMCapable
+                    $dataset | Out-UDGridData
                 }
             }
             3 {
                 # software inventory
-                New-UDGrid -Title "$resourceid - Installed Software" -Endpoint {
+                New-UDGrid -Title "$compname - Installed Software" -Endpoint {
                     $qfile = Join-Path $BasePath "cmarpinstalls.sql"
-                    Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
-                        Where-Object {$_.ResourceID -eq $resourceid} | Out-UDGridData
+                    $dataset = $null
+                    $dataset = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+                        Where-Object {$_.ResourceID -eq $resourceid} |
+                            Select-Object ProductName,Publisher,Version,ProductCode,Platform
+                    $dataset | Out-UDGridData
                 }
             }
             4 {
-                New-UDCard -Title "$resourceid - Collections" -Content {""}
+                New-UDGrid -Title "$compname - Collections" -Endpoint {
+                    $dataset = $null
+                    $qcoll = "SELECT DISTINCT
+                    ccm.CollectionID, coll.Name AS CollectionName, coll.Comment
+                    FROM v_ClientCollectionMembers AS ccm INNER JOIN
+                    v_Collection AS coll ON ccm.CollectionID = coll.CollectionID
+                    WHERE (ccm.ResourceID = $resourceid) order by coll.Name"
+                    $dataset = @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query $qcoll |
+                        Where-Object {$_.ResourceID -eq $resourceid})
+                    $dataset | Out-UDGridData
+                }
             }
             5 {
-                New-UDCard -Title "$resourceid - Collections" -Content {""}
+                New-UDCard -Title "$compname - Deployments" -Content {""}
             }
             6 {
-                New-UDGrid -Title "$resourceid - Network Adapters" -Endpoint {
+                New-UDGrid -Title "$compname - Network Adapters" -Endpoint {
                     $qfile = Join-Path $BasePath "cmnetadapters.sql"
-                    Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
-                        Where-Object {$_.ResourceID -eq $resourceid} | Out-UDGridData
+                    $dataset = $null
+                    $dataset = @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+                        Where-Object {$_.ResourceID -eq $resourceid} |
+                            Select-Object IPAddress,MAC,Mask,Gateway,DHCPEnabled,DNSDomain,DHCPServer)
+                    $dataset | Out-UDGridData
                 }
             }
         } # switch

@@ -3,7 +3,9 @@ New-UDPage -Url "/cmcollection/:collid/:tabnum" -Endpoint {
     switch ($tabnum) {
         '1' { $qname = "cmcollection.sql" }
         '2' { $qname = "cmcollmembers.sql" }
-        '3' { $qname = "coll3.sql" }
+        '3' { $qname = "cmcollqueryrules.sql" }
+        '4' { $qname = ""}
+        '6' { $qname = "cmcollvariables.sql" }
         default { $qname = "cmcollection.sql" }
     }
     $SiteHost = $Cache:ConnectionInfo.Server
@@ -11,11 +13,12 @@ New-UDPage -Url "/cmcollection/:collid/:tabnum" -Endpoint {
     $BasePath = $Cache:ConnectionInfo.QfilePath
     $qfile = Join-Path $BasePath $qname
     New-UDRow {
-        New-UDButton -Id 'b1' -Text "General" -OnClick { Invoke-UDRedirect -Url "cmcollection/$collid/1" } -Flat
-        New-UDButton -Id 'b2' -Text "Members" -OnClick { Invoke-UDRedirect -Url "cmcollection/$collid/2" } -Flat
-        New-UDButton -Id 'b3' -Text "QueryRules" -OnClick { Invoke-UDRedirect -Url "cmcollection/$collid/3" } -Flat
-        New-UDButton -Id 'b4' -Text "PowerCfgs" -OnClick { Invoke-UDRedirect -Url "cmcollection/$collid/4" } -Flat
-        New-UDButton -Id 'b5' -Text "Deployments" -OnClick { Invoke-UDRedirect -Url "cmcollection/$collid/5" } -Flat
+        New-UDButton -Id 'b1' -Text "General" -OnClick { Invoke-UDRedirect -Url "/cmcollection/$collid/1" } -Flat
+        New-UDButton -Id 'b2' -Text "Members" -OnClick { Invoke-UDRedirect -Url "/cmcollection/$collid/2" } -Flat
+        New-UDButton -Id 'b3' -Text "QueryRules" -OnClick { Invoke-UDRedirect -Url "/cmcollection/$collid/3" } -Flat
+        New-UDButton -Id 'b4' -Text "PowerCfgs" -OnClick { Invoke-UDRedirect -Url "/cmcollection/$collid/4" } -Flat
+        New-UDButton -Id 'b5' -Text "Deployments" -OnClick { Invoke-UDRedirect -Url "/cmcollection/$collid/5" } -Flat
+        New-UDButton -Id 'b6' -Text "Variables" -OnClick { Invoke-UDRedirect -Url "/cmcollection/$collid/6" } -Flat
     }
     New-UDRow {
         switch ($tabnum) {
@@ -45,22 +48,52 @@ New-UDPage -Url "/cmcollection/:collid/:tabnum" -Endpoint {
                 New-UDGrid -Title "Collection Members" -Endpoint {
                     Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile -EnableException |
                         Where-Object {$_.CollectionID -eq $collid} | Foreach-Object {
-                            $resid = [string]$_.ResourceID
-                            $name  = [string]$_.ComputerName
+                            $resid   = [string]$_.ResourceID
+                            $name    = [string]$_.ComputerName
+                            $model   = [string]$_.Model
+                            $osname  = [string]$_.OSName
+                            $osbuild = [string]$_.OSBuild
+                            $adsite  = [string]$_.ADSiteName
+                            $oslink  = New-UDElement -Tag "a" -Attributes @{ href="/cmfind/device/osname/$osname" } -Content { $osname }
+                            $adlink  = New-UDElement -Tag "a" -Attributes @{ href="/cmfind/device/adsitename/$adsite" } -Content { $adsite }
+                            $oblink  = New-UDElement -Tag "a" -Attributes @{ href="/cmfind/device/osbuild/$osbuild" } -Content { $osbuild }
+                            $mdlink  = New-UDElement -Tag "a" -Attributes @{ href="/cmfind/device/model/$model" } -Content { $model }
                             [pscustomobject]@{
-                                Name          = New-UDElement -Tag "a" -Attributes @{ href="/cmdevice/$resid/1"} -Content { $name }
+                                Name          = New-UDElement -Tag "a" -Attributes @{ href="/cmdevice/$resid/1" } -Content { $name }
                                 ClientVersion = [string]$_.ClientVersion
-                                Model         = [string]$_.Model
-                                OSName        = [string]$_.OSName
-                                OSBuild       = [string]$_.OSBuild
-                                ADSiteName    = [string]$_.ADSiteName
+                                Model         = $mdlink
+                                OSName        = $oslink
+                                OSBuild       = $oblink
+                                ADSiteName    = $adlink
                             }
                     } | Out-UDGridData
                 }
             }
-            '3' {}
+            '3' {
+                New-UDGrid -Title "Collection Query Rules" -Endpoint {
+                    $dataset = $null
+                    $dataset = @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+                        Where-Object {($null -ne $_.RuleName) -and ($_.CollectionID -eq $collid)})
+                    $dataset | Foreach-Object {
+                        [pscustomobject]@{
+                            CollectionID   = [string]$_.CollectionID
+                            CollectionName = [string]$_.CollectionName
+                            Members        = [int]$_.MemberCount
+                            RuleName       = [string]$_.RuleName
+                            LimitCollID    = [string]$_.LimitToCollectionID
+                        }
+                    } | Out-UDGridData
+                }
+            }
             '4' {}
             '5' {}
+            '6' {
+                New-UDGrid -Title "Collection Variables" -Endpoint {
+                    @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile -EnableException |
+                        Where-Object {$_.CollectionID -eq $collid} |
+                            Select-Object VariableName,Value,Masked) | Out-UDGridData
+                }
+            }
         }
     }
 }
