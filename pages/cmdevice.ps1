@@ -1,5 +1,5 @@
 New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
-    param ([string]$resourceid, [int]$tabnum)
+    param ([string]$resourceid, [int]$tabnum = 1)
     switch ($tabnum) {
         1 { $qname = "cmdevice.sql" }
         2 { $qname = "cmdevicehw.sql" }
