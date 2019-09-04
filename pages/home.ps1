@@ -27,7 +27,10 @@
                     New-UDCard -Id 'card4' -Title "Compliance" -Text "Updates Compliance Summary" -Links @(New-UDLink -Url "./cmupdatecompliance" -Text "Summary")
                 }
                 New-UDColumn -Content {
-                    New-UDCard -Id 'card5' -Title "Updates" -Text "Software Updates Summary" -Links @(New-UDLink -Url "./cmupdatesummary" -Text "Summary")
+                    New-UDCard -Id 'card5' -Title "Updates" -Text "CM Software Updates Summary" -Links @(New-UDLink -Url "./cmupdatesummary" -Text "Summary")
+                }
+                New-UDColumn -Content {
+                    New-UDCard -Id 'card6' -Title "AzureAD Devices" -Text "AzureAD devices" -Links @(New-UDLink -Url "./aadcomputers" -Text "Summary")
                 }
             }
             New-UDRow {
