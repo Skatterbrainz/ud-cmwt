@@ -353,10 +353,12 @@ function Start-UDCmwtDashboard {
             }
         } # configmgr
         New-UDSideNavItem -Text "SQL Server ($SiteCode)" -Icon folder -Children {
-            New-UDSideNavItem -Text "SQL Version" -Url "sqlserverinfo" -Icon database
-            New-UDSideNavItem -Text "Database Files" -Url "sqlfiles" -Icon database
-            New-UDSideNavItem -Text "TempDB Usage" -Url "sqltempdb" -Icon database
-            New-UDSideNavItem -Text "SQL Agent Jobs" -Url "sqlagentjobs" -Icon database
+            New-UDSideNavItem -Text "General" -Icon folder -Children {
+                New-UDSideNavItem -Text "SQL Version" -Url "sqlserverinfo" -Icon database
+                New-UDSideNavItem -Text "Database Files" -Url "sqlfiles" -Icon database
+                New-UDSideNavItem -Text "TempDB Usage" -Url "sqltempdb" -Icon database
+                New-UDSideNavItem -Text "SQL Agent Jobs" -Url "sqlagentjobs" -Icon database
+            }
             New-UDSideNavItem -Text "Status" -Icon folder -Children {
                 New-UDSideNavItem -Text "SQL Services" -Url "sqlservices" -Icon servicestack
                 New-UDSideNavItem -Text "SQL Agent Job History" -Url "sqlagentjobhistory" -Icon search_location
@@ -367,6 +369,7 @@ function Start-UDCmwtDashboard {
             New-UDSideNavItem -Text "Performance" -Icon folder -Children {
                 New-UDSideNavItem -Text "Memory Usage" -Url "sqlmem" -Icon search_location
                 New-UDSideNavItem -Text "Fragmentation" -Url "sqlindexfrag" -Icon search_location
+                New-UDSideNavItem -Text "DBCC Memory Status" -Url "sqldbccmem" -Icon search_location
             }
             New-UDSideNavItem -Text "CM_$SiteCode Database" -Icon folder -Children {
                 New-UDSideNavItem -Text "Views" -Url "dbviews" -Icon table
