@@ -1,5 +1,6 @@
 select
     sys.Name0 as 'ComputerName',
+    sys.ResourceID,
     sys.User_Name0 as 'UserName',
     sys.Operating_System_Name_and0 AS OSName,
     sys.AD_Site_Name0 AS ADSiteName,
