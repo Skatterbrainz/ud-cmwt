@@ -5,7 +5,7 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
         2 { $qname = "cmdevicehw.sql" }
         3 { $qname = "cmdevicesw.sql" }
         4 { $qname = "cmdevicecolls.sql" }
-        5 { $qname = "cmdevicedeps.sql" }
+        5 { $qname = "cmclienthealthsummary.sql" }
         default { $qname = "cmdevice.sql" }
     }
     $SiteHost = $Cache:ConnectionInfo.Server
@@ -24,7 +24,7 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
         New-UDButton -Id 'b2' -Text "Hardware" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/2" } -Flat
         New-UDButton -Id 'b3' -Text "Software" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/3" } -Flat
         New-UDButton -Id 'b4' -Text "Collections" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/4" } -Flat
-        New-UDButton -Id 'b5' -Text "Deployments" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/5" } -Flat
+        New-UDButton -Id 'b5' -Text "Client Status" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/5" } -Flat
         New-UDButton -Id 'b6' -Text "Networking" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/6" } -Flat
     }
     New-UDRow {
@@ -115,7 +115,40 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
                 }
             }
             5 {
-                New-UDCard -Title "$compname - Deployments" -Content {""}
+                New-UDTable -Title "$compname - Client Status" -Headers @("Property","Value") -Endpoint {
+                    $qfile = Join-Path $BasePath "cmclienthealthsummary.sql"
+                    $cdata = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+                        Where-Object {$_.ResourceID -eq $resourceid} | Select-Object -First 1
+                    $lasthw  = "$([string]$cdata.LastHW) ($([int]$cdata.HwInvAge) days ago)"
+                    $lastsw  = "$([string]$cdata.LastSW) ($([int]$cdata.SwInvAge) days ago)"
+                    $lastddr = "$([string]$cdata.LastDDR) ($((New-TimeSpan -Start $cdata.LastDDR -End $(Get-Date)).Days) days ago)"
+                    $laston  = "$([string]$cdata.LastOnline) ($((New-TimeSpan -Start $cdata.LastOnline -End $(Get-Date)).Days) days ago)"
+                    $lastpol = "$([string]$cdata.LastPolicyRequest) ($((New-TimeSpan -Start $cdata.LastPolicyRequest -End $(Get-Date)).Days) days ago)"
+                    $Data = @(
+                        [pscustomobject]@{ property = "Name"; value = [string]$cdata.ComputerName }
+                        [pscustomobject]@{ property = "UserName"; value = [string]$cdata.UserName }
+                        [pscustomobject]@{ property = "ClientState"; value = [string]$cdata.ClientStateDescription }
+                        [pscustomobject]@{ property = "ActiveStatus"; value = [string]$cdata.ClientActiveStatus }
+                        [pscustomobject]@{ property = "LastActive"; value = [string]$cdata.LastActiveTime }
+                        [pscustomobject]@{ property = "ActiveDDR"; value = [string]$cdata.IsActiveDDR }
+                        [pscustomobject]@{ property = "ActiveHW"; value = [string]$cdata.IsActiveHW }
+                        [pscustomobject]@{ property = "ActiveSW"; value = [string]$cdata.IsActiveSW }
+                        [pscustomobject]@{ property = "ActivePolicy"; value = [string]$cdata.ISActivePolicyRequest }
+                        [pscustomobject]@{ property = "ActiveStatus"; value = [string]$cdata.IsActiveStatusMessages }
+                        [pscustomobject]@{ property = "LastOnline"; value = $laston }
+                        [pscustomobject]@{ property = "LastDDR"; value = $lastddr }
+                        [pscustomobject]@{ property = "LastHWInv"; value = $lasthw }
+                        [pscustomobject]@{ property = "LastSWInv"; value = $lastsw }
+                        [pscustomobject]@{ property = "LastPolicyRequest"; value = $lastpol }
+                        [pscustomobject]@{ property = "LastStatusMessage"; value = [string]$cdata.LastStatusMessage }
+                        [pscustomobject]@{ property = "LastHealthEval"; value = [string]$cdata.LastHealthEvaluation }
+                        [pscustomobject]@{ property = "LastResult"; value = [string]$cdata.LastResult }
+                        [pscustomobject]@{ property = "LastEvaluation"; value = [string]$cdata.LastEval }
+                        [pscustomobject]@{ property = "RemediationStatus"; value = [string]$cdata.ClientRemediationSuccess }
+                        [pscustomobject]@{ property = "ExpectPolicyRequest"; value = [string]$cdata.ExpectedNextPolicyRequest }
+                    )
+                    $Data | Out-UDTableData -Property ("Property","Value")
+                }
             }
             6 {
                 New-UDGrid -Title "$compname - Network Adapters" -Endpoint {
