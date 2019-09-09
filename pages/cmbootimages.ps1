@@ -1,4 +1,4 @@
-﻿New-UDPage -Name "cmbootimages" -Id 'cmbootimages' -Content {
+﻿New-UDPage -Name "cmbootimages" -Content {
 	New-UDGrid -Title "Configuration Manager Software: Boot Images" -Endpoint {
         $qname    = "cmpackages.sql"
         $SiteHost = $Cache:ConnectionInfo.Server

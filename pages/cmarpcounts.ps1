@@ -1,4 +1,4 @@
-New-UDPage -Name "cmarpcounts" -Id 'cmarpcounts' -Content {
+New-UDPage -Name "cmarpcounts" -Content {
 	New-UDGrid -Title "Configuration Manager Software Inventory" -Endpoint {
         $qname    = "cmarpcounts.sql"
         $SiteHost = $Cache:ConnectionInfo.Server

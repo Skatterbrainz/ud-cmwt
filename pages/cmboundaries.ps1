@@ -1,4 +1,4 @@
-New-UDPage -Name "cmboundaries" -Id 'cmboundaries' -Content {
+New-UDPage -Name "cmboundaries" -Content {
 	New-UDGrid -Title "Configuration Manager Site Boundaries" -Endpoint {
         $qname    = "cmboundaries.sql"
         $SiteHost = $Cache:ConnectionInfo.Server
