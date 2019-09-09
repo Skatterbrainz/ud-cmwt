@@ -340,16 +340,18 @@ function Start-UDCmwtDashboard {
                 New-UDSideNavItem -Text "Certificates" -Url "" -Icon certificate
             }
             New-UDSideNavItem -Text "Monitoring" -Icon folder -Children {
+                New-UDSideNavItem -Text "$SiteCode - Site Status" -Url "cmsitestatus" -Icon medkit
+                New-UDSideNavItem -Text "$SiteCode - Component Status" -Url "cmcompstatus" -Icon medkit
+                New-UDSideNavItem -Text "$SiteCode - Deployments" -Url "cmdepsummary" -Icon medkit
+                New-UDSideNavItem -Text "Client Health Summary" -Url "cmclienthealth" -Icon medkit
+                New-UDSideNavItem -Text "SUP Synch Status" -Url "cmsupsynch" -Icon medkit
+                New-UDSideNavItem -Text "Client Scan Exceptions" -Url "cmclientscans" -Icon medkit
                 New-UDSideNavItem -Text "$SmsProvider" -Icon folder -Children {
                     New-UDSideNavItem -Text "Processes" -Url "processes" -Icon tachometer
                     New-UDSideNavItem -Text "Services" -PageName "services" -Icon tachometer
                     New-UDSideNavItem -Text "System Event Log" -PageName "syseventlog" -Icon tachometer
                     New-UDSideNavItem -Text "App Event Log" -PageName "appeventlog" -Icon tachometer
                 }
-                New-UDSideNavItem -Text "$SiteCode - Site Status" -Url "cmsitestatus" -Icon medkit
-                New-UDSideNavItem -Text "$SiteCode - Component Status" -Url "cmcompstatus" -Icon medkit
-                New-UDSideNavItem -Text "$SiteCode - Deployments" -Url "cmdepsummary" -Icon medkit
-                New-UDSideNavItem -Text "SUP Synch Status" -Url "cmsupsynch" -Icon medkit
             }
         } # configmgr
         New-UDSideNavItem -Text "SQL Server ($SiteCode)" -Icon folder -Children {
