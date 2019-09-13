@@ -50,6 +50,7 @@ function Export-CmwtCredential {
 .OUTPUTS
     PSCredential object
 #>
+
 function Import-CmwtCredential {
     [CmdletBinding()]
     param (
@@ -88,6 +89,7 @@ function Import-CmwtCredential {
 .NOTES
     JSON file can be edited externally if desired
 #>
+
 function Set-CmwtConfigJson {
     [CmdletBinding()]
     param (
@@ -156,6 +158,50 @@ function Get-CmwtConfigJson {
 
 <#
 .SYNOPSIS
+    Abstraction of Invoke-DbaQuery
+.DESCRIPTION
+    Abstraction of Invoke-DbaQuery
+.PARAMETER QueryName
+    Base name of SQL file to process from the cmqueries folder
+.PARAMETER QueryText
+    Query statement to process instead of a SQL file
+#>
+
+function Get-CmwtDbQuery {
+    [CmdletBinding()]
+    param (
+        [parameter()] [string] $QueryName = "",
+        [parameter()] [string] $QueryText = ""
+    )
+    try {
+        Write-Verbose "get-cmwtquery: connecting to database"
+        $SiteHost = $Cache:ConnectionInfo.Server
+        $Database = $Cache:ConnectionInfo.CmDatabase
+        $BasePath = $Cache:ConnectionInfo.QfilePath
+        if ([string]::IsNullOrEmpty($BasePath)) {
+            throw "Path values were not imported"
+        }
+        if ($QueryText -ne "") {
+            @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query $QueryText)
+        }
+        else {
+            $qfile    = Join-Path $BasePath $QueryName
+            if (!$qfile.EndsWith('.sql')) { $qfile += '.sql' }
+            if (Test-Path $qfile) {
+                @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile)
+            }
+            else {
+                Throw "Query file not found: $qfile"
+            }
+        }
+    }
+    catch {
+        Write-Error $Error[0].Exception.Message
+    }
+}
+
+<#
+.SYNOPSIS
     Launch CMWT UniversalDashboard instance
 .DESCRIPTION
     Ummmmm, yeah, I just said that.
@@ -177,6 +223,8 @@ function Get-CmwtConfigJson {
 .PARAMETER Port
     TCP port to run CMWT instance. Default is 8081
     ConfigJson overrides this parameter
+.PARAMETER Restart
+    Stops all UDDashboard instances and restarts a new instance
 .EXAMPLE
     Start-UDCmwtDashboard
     Start CMWT using default parameters from configuration file
@@ -189,8 +237,9 @@ function Get-CmwtConfigJson {
 .OUTPUTS
     UDDashboard instance: Name, Port, Running, DashboardService
 .NOTES
-    Tested with UD Community Edition 2.5.3 only
+    Tested with UD Community Edition 2.5.3 and 2.6.0
 #>
+
 function Start-UDCmwtDashboard {
     [CmdletBinding()]
     param (
@@ -200,10 +249,11 @@ function Start-UDCmwtDashboard {
         [parameter(HelpMessage="ConfigMgr Site Code")] [string] $SiteCode = "",
         [parameter(HelpMessage="AzureAD Credentials")] [pscredential] $Credential,
         [parameter(HelpMessage="Local Port for CMWT")] [int] $Port = 8081,
-        [switch] $StopAll
+        [paramter(HelpMessage="Stop and restart dashboards if running")] [switch] $Restart
     )
-    if ($StopAll) {
-        Get-UDDashboard | Stop-UDDashboard
+    if ($Restart) {
+        Write-Verbose "terminating cmwt dashboard sessions"
+        Get-UDDashboard -Name "cmwt" | Stop-UDDashboard
     }
     Enable-UDLogging -FilePath "$env:TEMP"
     if ($null -eq $Credential) {
@@ -215,6 +265,7 @@ function Start-UDCmwtDashboard {
             break
         }
     }
+    Write-Verbose "AzureAD credentials imported successfully"
     if (![string]::IsNullOrEmpty($ConfigJson)) {
         Write-Verbose "ud-cmwt: looking for default site configuration file: $ConfigJson"
         if (Test-Path $ConfigJson) {
@@ -272,6 +323,7 @@ function Start-UDCmwtDashboard {
 #    $Endpoints = Get-ChildItem (Join-Path $PSScriptRoot 'endpoints') | ForEach-Object {
 #        & $_.FullName
 #    }
+    $Init = New-UDEndpointInitialization -Variable "Root" -Function 'Get-CmwtDbQuery'
 
     Write-UDLog -Message $Cache:ConnectionInfo.SmsProvider
     Write-UDLog -Message $Cache:ConnectionInfo.Server
@@ -283,100 +335,92 @@ function Start-UDCmwtDashboard {
 
     $Navigation = New-UDSideNav -Content {
         New-UDSideNavItem -Text "Home" -Url "Home" -Icon home
-        New-UDSideNavItem -Text "ConfigMgr" -Icon folder -Children {
+        New-UDSideNavItem -Text "CM - $SiteCode" -Icon folder -Children {
             New-UDSideNavItem -Text "Site Summary" -Url "cmsummary" -Icon database
-            New-UDSideNavItem -Text "Assets" -Icon folder -Children {
-                New-UDSideNavItem -Text "Devices" -Url "cmdevices" -Icon desktop
-                New-UDSideNavItem -Text "Device Collections" -Url "cmcollections/2" -Icon desktop
-                New-UDSideNavItem -Text "Users" -Url "cmusers" -Icon user
-                New-UDSideNavItem -Text "User Collections" -Url "cmcollections/1" -Icon users
-                New-UDSideNavItem -Text "Orchestration Groups" -Url "" -Icon network_wired
+        }
+        New-UDSideNavItem -Text "CM - Assets" -Icon folder -Children {
+            New-UDSideNavItem -Text "Devices" -Url "cmdevices" -Icon desktop
+            New-UDSideNavItem -Text "Device Collections" -Url "cmcollections/2" -Icon desktop
+            New-UDSideNavItem -Text "Users" -Url "cmusers" -Icon user
+            New-UDSideNavItem -Text "User Collections" -Url "cmcollections/1" -Icon users
+            New-UDSideNavItem -Text "Orchestration Groups" -Url "" -Icon network_wired
+        }
+        New-UDSideNavItem -Text "CM - Software Deploy" -Icon folder -Children {
+            New-UDSideNavItem -Text "Applications" -Url "cmapps" -Icon app_store
+            New-UDSideNavItem -Text "Application Groups" -Url "" -Icon app_store
+            New-UDSideNavItem -Text "Packages" -Url "cmpackages" -Icon app_store
+            New-UDSideNavItem -Text "Scripts" -Url "" -Icon scroll
+        }
+        New-UDSideNavItem -Text "CM - Software Updates" -Icon folder -Children {
+            New-UDSideNavItem -Text "Summary" -Url "cmupdatesummary" -Icon stroopwafel
+            New-UDSideNavItem -Text "Compliance" -Url "cmupdatecompliance" -Icon stroopwafel
+            New-UDSideNavItem -Text "All Updates" -Url "cmupdates" -Icon stroopwafel
+            New-UDSideNavItem -Text "Update Groups" -Url "" -Icon stroopwafel
+            New-UDSideNavItem -Text "Update Packages" -Url "cmupdatepkgs" -Icon stroopwafel
+            New-UDSideNavItem -Text "ADRs" -Url "" -Icon stroopwafel
+            New-UDSideNavItem -Text "3rd Party Catalogs" -Url "" -Icon stroopwafel
+        }
+        New-UDSideNavItem -Text "CM - Operating Systems" -Icon folder -Children {
+            New-UDSideNavItem -Text "OS Images" -Url "cmosimages" -Icon windows
+            New-UDSideNavItem -Text "OS Upgrades" -Url "cmosupgrades" -Icon windows
+            New-UDSideNavItem -Text "Drivers" -Url "" -Icon usb
+            New-UDSideNavItem -Text "Driver Packages" -Url "cmdriverpkgs" -Icon usb
+            New-UDSideNavItem -Text "Boot Images" -Url "cmbootimages" -Icon windows
+            New-UDSideNavItem -Text "Task Sequences" -Url "cmtasksequences" -Icon network_wired
+            New-UDSideNavItem -Text "VHD Packages" -Url "cmvhdpkgs" -Icon gears
+        }
+        New-UDSideNavItem -Text "CM - Hardware Inventory" -Icon folder -Children {
+            New-UDSideNavItem -Text "Group: Models" -Url "cmhwmodels" -Icon desktop
+            New-UDSideNavItem -Text "Group: DHCP Servers" -Url "cmhwdhcp" -Icon network_wired
+            New-UDSideNavItem -Text "Group: IP Gateways" -Url "cmhwgateways" -Icon network_wired
+            New-UDSideNavItem -Text "Group: AD Site" -Url "cmhwadsites" -Icon network_wired
+            New-UDSideNavItem -Text "Exceptions" -Icon folder -Children {
+                New-UDSideNavItem -Text "Low Disk Space" -Url "" -Icon thermometer
+                New-UDSideNavItem -Text "Old Inventory" -Url "" -Icon clock
             }
-            New-UDSideNavItem -Text "Software Deploy" -Icon folder -Children {
-                New-UDSideNavItem -Text "Applications" -Url "cmapps" -Icon app_store
-                New-UDSideNavItem -Text "Application Groups" -Url "" -Icon app_store
-                New-UDSideNavItem -Text "Packages" -Url "cmpackages" -Icon app_store
-                New-UDSideNavItem -Text "Scripts" -Url "" -Icon scroll
-            }
-            New-UDSideNavItem -Text "Software Updates" -Icon folder -Children {
-                New-UDSideNavItem -Text "Summary" -Url "cmupdatesummary" -Icon stroopwafel
-                New-UDSideNavItem -Text "Compliance" -Url "cmupdatecompliance" -Icon stroopwafel
-                New-UDSideNavItem -Text "All Updates" -Url "cmupdates" -Icon stroopwafel
-                New-UDSideNavItem -Text "Update Groups" -Url "" -Icon stroopwafel
-                New-UDSideNavItem -Text "Update Packages" -Url "cmupdatepkgs" -Icon stroopwafel
-                New-UDSideNavItem -Text "ADRs" -Url "" -Icon stroopwafel
-                New-UDSideNavItem -Text "3rd Party Catalogs" -Url "" -Icon stroopwafel
-            }
-            New-UDSideNavItem -Text "Operating Systems" -Icon folder -Children {
-                New-UDSideNavItem -Text "OS Images" -Url "cmosimages" -Icon windows
-                New-UDSideNavItem -Text "OS Upgrades" -Url "cmosupgrades" -Icon windows
-                New-UDSideNavItem -Text "Drivers" -Url "" -Icon usb
-                New-UDSideNavItem -Text "Driver Packages" -Url "cmdriverpkgs" -Icon usb
-                New-UDSideNavItem -Text "Boot Images" -Url "cmbootimages" -Icon windows
-                New-UDSideNavItem -Text "Task Sequences" -Url "cmtasksequences" -Icon network_wired
-                New-UDSideNavItem -Text "VHD Packages" -Url "cmvhdpkgs" -Icon gears
-            }
-            New-UDSideNavItem -Text "Hardware Inventory" -Icon folder -Children {
-                New-UDSideNavItem -Text "Group: Models" -Url "cmhwmodels" -Icon desktop
-                New-UDSideNavItem -Text "Group: DHCP Servers" -Url "cmhwdhcp" -Icon network_wired
-                New-UDSideNavItem -Text "Group: IP Gateways" -Url "cmhwgateways" -Icon network_wired
-                New-UDSideNavItem -Text "Group: AD Site" -Url "cmhwadsites" -Icon network_wired
-                New-UDSideNavItem -Text "Exceptions" -Icon folder -Children {
-                    New-UDSideNavItem -Text "Low Disk Space" -Url "" -Icon thermometer
-                    New-UDSideNavItem -Text "Old Inventory" -Url "" -Icon clock
-                }
-            }
-            New-UDSideNavItem -Text "Software Inventory" -Icon folder -Children {
-                New-UDSideNavItem -Text "Installed Software" -Url "cmarpcounts" -Icon file_contract
-                New-UDSideNavItem -Text "Operating Systems" -Url "cmoscounts" -Icon file_alt
-                New-UDSideNavItem -Text "Installed Hotfixes" -Url "cmhotfixes" -Icon file_contract
-            }
-            New-UDSideNavItem -Text "Administration" -Icon folder -Children {
-                New-UDSideNavItem -Text "Discovery Methods" -Url "" -Icon search
-                New-UDSideNavItem -Text "Site Boundaries" -Url "cmboundaries" -Icon city
-                New-UDSideNavItem -Text "Boundary Groups" -Url "cmboundarygroups" -Icon city
-                New-UDSideNavItem -Text "Site Systems" -Url "cmsitesystems" -Icon server
-                New-UDSideNavItem -Text "Site Administrators" -Url "cmadmins" -Icon user_shield
-                New-UDSideNavItem -Text "Certificates" -Url "" -Icon certificate
-            }
-            New-UDSideNavItem -Text "Monitoring" -Icon folder -Children {
-                New-UDSideNavItem -Text "$SiteCode - Site Status" -Url "cmsitestatus" -Icon medkit
-                New-UDSideNavItem -Text "$SiteCode - Component Status" -Url "cmcompstatus" -Icon medkit
-                New-UDSideNavItem -Text "$SiteCode - Deployments" -Url "cmdepsummary" -Icon medkit
-                New-UDSideNavItem -Text "Client Health Summary" -Url "cmclienthealth" -Icon medkit
-                New-UDSideNavItem -Text "SUP Synch Status" -Url "cmsupsynch" -Icon medkit
-                New-UDSideNavItem -Text "Client Scan Exceptions" -Url "cmclientscans" -Icon medkit
-                New-UDSideNavItem -Text "$SmsProvider" -Icon folder -Children {
-                    New-UDSideNavItem -Text "Processes" -Url "processes" -Icon tachometer
-                    New-UDSideNavItem -Text "Services" -PageName "services" -Icon tachometer
-                    New-UDSideNavItem -Text "System Event Log" -PageName "syseventlog" -Icon tachometer
-                    New-UDSideNavItem -Text "App Event Log" -PageName "appeventlog" -Icon tachometer
-                }
-            }
-        } # configmgr
-        New-UDSideNavItem -Text "SQL Server ($SiteCode)" -Icon folder -Children {
-            New-UDSideNavItem -Text "General" -Icon folder -Children {
-                New-UDSideNavItem -Text "SQL Version" -Url "sqlserverinfo" -Icon database
-                New-UDSideNavItem -Text "Database Files" -Url "sqlfiles" -Icon database
-                New-UDSideNavItem -Text "TempDB Usage" -Url "sqltempdb" -Icon database
-                New-UDSideNavItem -Text "SQL Agent Jobs" -Url "sqlagentjobs" -Icon database
-            }
-            New-UDSideNavItem -Text "Status" -Icon folder -Children {
-                New-UDSideNavItem -Text "SQL Services" -Url "sqlservices" -Icon servicestack
-                New-UDSideNavItem -Text "SQL Agent Job History" -Url "sqlagentjobhistory" -Icon search_location
-                New-UDSideNavItem -Text "Log Errors" -Url "sqlerrorlog" -Icon database
-                New-UDSideNavItem -Text "Backup History" -Url "sqlbackuphistory" -Icon search_location
-                New-UDSideNavItem -Text "SPN Registrations" -Url "sqlspn" -Icon search_location
-            }
-            New-UDSideNavItem -Text "Performance" -Icon folder -Children {
-                New-UDSideNavItem -Text "Memory Usage" -Url "sqlmem" -Icon search_location
-                New-UDSideNavItem -Text "Fragmentation" -Url "sqlindexfrag" -Icon search_location
-                New-UDSideNavItem -Text "DBCC Memory Status" -Url "sqldbccmem" -Icon search_location
-            }
-            New-UDSideNavItem -Text "CM_$SiteCode Database" -Icon folder -Children {
-                New-UDSideNavItem -Text "Views" -Url "dbviews" -Icon table
-                New-UDSideNavItem -Text "Tables" -Url "dbtables" -Icon table
-            }
+        }
+        New-UDSideNavItem -Text "CM - Software Inventory" -Icon folder -Children {
+            New-UDSideNavItem -Text "Installed Software" -Url "cmarpcounts" -Icon file_contract
+            New-UDSideNavItem -Text "Operating Systems" -Url "cmoscounts" -Icon file_alt
+            New-UDSideNavItem -Text "Installed Hotfixes" -Url "cmhotfixes" -Icon file_contract
+        }
+        New-UDSideNavItem -Text "CM - Administration" -Icon folder -Children {
+            New-UDSideNavItem -Text "Discovery Methods" -Url "" -Icon search
+            New-UDSideNavItem -Text "Site Boundaries" -Url "cmboundaries" -Icon city
+            New-UDSideNavItem -Text "Boundary Groups" -Url "cmboundarygroups" -Icon city
+            New-UDSideNavItem -Text "Site Systems" -Url "cmsitesystems" -Icon server
+            New-UDSideNavItem -Text "Site Administrators" -Url "cmadmins" -Icon user_shield
+            New-UDSideNavItem -Text "Certificates" -Url "" -Icon certificate
+        }
+        New-UDSideNavItem -Text "CM - Monitoring" -Icon folder -Children {
+            New-UDSideNavItem -Text "$SiteCode - Site Status" -Url "cmsitestatus" -Icon medkit
+            New-UDSideNavItem -Text "$SiteCode - Component Status" -Url "cmcompstatus" -Icon medkit
+            New-UDSideNavItem -Text "$SiteCode - Deployments" -Url "cmdepsummary" -Icon medkit
+            New-UDSideNavItem -Text "Client Health Summary" -Url "cmclienthealth" -Icon medkit
+            New-UDSideNavItem -Text "SUP Synch Status" -Url "cmsupsynch" -Icon medkit
+            New-UDSideNavItem -Text "Client Scan Exceptions" -Url "cmclientscans" -Icon medkit
+        }
+        New-UDSideNavItem -Text "SQL - General" -Icon folder -Children {
+            New-UDSideNavItem -Text "SQL Version" -Url "sqlserverinfo" -Icon database
+            New-UDSideNavItem -Text "Database Files" -Url "sqlfiles" -Icon database
+            New-UDSideNavItem -Text "TempDB Usage" -Url "sqltempdb" -Icon database
+            New-UDSideNavItem -Text "SQL Agent Jobs" -Url "sqlagentjobs" -Icon database
+        }
+        New-UDSideNavItem -Text "SQL - Status" -Icon folder -Children {
+            New-UDSideNavItem -Text "SQL Services" -Url "sqlservices" -Icon servicestack
+            New-UDSideNavItem -Text "SQL Agent Job History" -Url "sqlagentjobhistory" -Icon search_location
+            New-UDSideNavItem -Text "Log Errors" -Url "sqlerrorlog" -Icon database
+            New-UDSideNavItem -Text "Backup History" -Url "sqlbackuphistory" -Icon search_location
+            New-UDSideNavItem -Text "SPN Registrations" -Url "sqlspn" -Icon search_location
+        }
+        New-UDSideNavItem -Text "SQL - Performance" -Icon folder -Children {
+            New-UDSideNavItem -Text "Memory Usage" -Url "sqlmem" -Icon search_location
+            New-UDSideNavItem -Text "Fragmentation" -Url "sqlindexfrag" -Icon search_location
+            New-UDSideNavItem -Text "DBCC Memory Status" -Url "sqldbccmem" -Icon search_location
+        }
+        New-UDSideNavItem -Text "SQL - CM_$SiteCode Database" -Icon folder -Children {
+            New-UDSideNavItem -Text "Views" -Url "dbviews" -Icon table
+            New-UDSideNavItem -Text "Tables" -Url "dbtables" -Icon table
         }
         New-UDSideNavItem -Text "Active Directory" -Icon folder -Children {
             New-UDSideNavItem -Text "Domain" -Url "addomain" -Icon mountain
@@ -403,6 +447,6 @@ function Start-UDCmwtDashboard {
     }
     #endregion NavigationMenu
 
-    $Dashboard = New-UDDashboard -Title $Cache:CMWT.AppName -Pages $Pages -Navigation $Navigation
-    Start-UDDashboard -Dashboard $Dashboard -Port $Port
+    $Dashboard = New-UDDashboard -Title $Cache:CMWT.AppName -Pages $Pages -Navigation $Navigation -EndpointInitialization $Init
+    Start-UDDashboard -Dashboard $Dashboard -Port $Port -Name "cmwt"
 }
