@@ -1,10 +1,5 @@
-New-UDPage -Name "cmdepsummary" -Id 'cmdepsummary' -Content {
+New-UDPage -Name "cmdepsummary" -Content {
 	New-UDGrid -Title "Configuration Manager Deployment Summaries" -Endpoint {
-        $qname    = "cmdepsummary.sql"
-        $SiteHost = $Cache:ConnectionInfo.Server
-        $Database = $Cache:ConnectionInfo.CmDatabase
-		$BasePath = $Cache:ConnectionInfo.QfilePath
-		$qfile    = Join-Path $BasePath $qname
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile | Out-UDGridData
+        Get-CmwtDbQuery -QueryName "cmdepsummary" | Out-UDGridData
     }
 }

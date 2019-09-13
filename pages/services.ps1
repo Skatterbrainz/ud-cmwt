@@ -1,6 +1,7 @@
-﻿New-UDPage -Name "Services" -Icon tachometer -Content {
+﻿New-UDPage -Name "services/:hostname" -Content {
+    param ($hostname)
     New-UDGrid -Title "Services" -Endpoint {
-        Get-Service -ComputerName $Cache:ConnectionInfo.Server | ForEach-Object {
+        Get-Service -ComputerName $hostname | ForEach-Object {
             [pscustomobject]@{
                 DisplayName = [string]$_.DisplayName
                 ServiceName = [string]$_.ServiceName

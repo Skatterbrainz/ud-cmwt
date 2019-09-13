@@ -31,11 +31,7 @@ New-UDPage -Url "/cmfind/:cmclass/:prop/:value" -Endpoint {
     }
     $sval = $value -replace '%20',' '
     $pagetitle += "`: $value"
-    $SiteHost = $Cache:ConnectionInfo.Server
-    $Database = $Cache:ConnectionInfo.CmDatabase
-    $BasePath = $Cache:ConnectionInfo.QfilePath
-    $qfile    = Join-Path $BasePath $qname
-    $cdata = @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile | Where-Object {$_."$prop" -eq $sval})
+    $cdata = @(Get-CmwtDbQuery -QueryName $qname | Where-Object {$_."$prop" -eq $sval})
 
     New-UDRow {
         New-UDGrid -Title "$pagetitle ($sval)" -Endpoint {

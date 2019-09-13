@@ -1,11 +1,9 @@
-New-UDPage -Name "cmsummary" -Id 'cmsummary' -Content {
+New-UDPage -Name "cmsummary" -Content {
     New-UDCard -Id 'card1' -Title "Site Information" -Horizontal -Endpoint {
         New-UDRow {
             New-UDColumn -Content {
                 New-UDTable -Title "Site Information" -Headers @("Property","Value") -Endpoint {
-                    $SiteHost = $Cache:ConnectionInfo.Server
-                    $Database = $Cache:ConnectionInfo.CmDatabase
-                    $siteinfo = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_Site"
+                    $siteinfo = Get-CmwtDbQuery -QueryText "select * from v_site"
                     $Data = @(
                         [pscustomobject]@{ property = "SiteCode"; value = [string]$siteinfo.SiteCode }
                         [pscustomobject]@{ property = "SiteName"; value = [string]$siteinfo.SiteName }
@@ -17,11 +15,9 @@ New-UDPage -Name "cmsummary" -Id 'cmsummary' -Content {
             } # column
             New-UDColumn -Content {
                 New-UDTable -Title "Assets Summary" -Headers @("Resource","Count") -Endpoint {
-                    $SiteHost = $Cache:ConnectionInfo.Server
-                    $Database = $Cache:ConnectionInfo.CmDatabase
-                    $devices  = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_r_system"
-                    $users    = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_r_user"
-                    $pkgs     = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_package"
+                    $devices  = Get-CmwtDbQuery -QueryText "select * from v_r_system"
+                    $users    = Get-CmwtDbQuery -QueryText "select * from v_r_user"
+                    $pkgs     = Get-CmwtDbQuery -QueryText "select * from v_package"
                     $Data = @(
                         [pscustomobject]@{ resource = "Devices"; count = [int]$devices.Count}
                         [pscustomobject]@{ resource = "Users"; count = [int]$users.Count}
@@ -32,12 +28,7 @@ New-UDPage -Name "cmsummary" -Id 'cmsummary' -Content {
             } # column
             New-UDColumn {
                 New-UDTable -Title "Client Versions" -Headers @("Version","Devices") -Endpoint {
-                    $qname    = "cmclientversions.sql"
-                    $SiteHost = $Cache:ConnectionInfo.Server
-                    $Database = $Cache:ConnectionInfo.CmDatabase
-                    $BasePath = $Cache:ConnectionInfo.QfilePath
-                    $qfile    = Join-Path $BasePath $qname
-                    $clients  = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile
+                    $clients  = Get-CmwtDbQuery -QueryName "cmclientversions"
                     $clients | ForEach-Object {
                         [pscustomobject]@{
                             Version  = [string]$_.ClientVersion

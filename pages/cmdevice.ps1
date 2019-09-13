@@ -105,10 +105,10 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
                 New-UDGrid -Title "$compname - Collections" -Endpoint {
                     $dataset = $null
                     $qcoll = "SELECT DISTINCT
-                    ccm.CollectionID, coll.Name AS CollectionName, coll.Comment
-                    FROM v_ClientCollectionMembers AS ccm INNER JOIN
-                    v_Collection AS coll ON ccm.CollectionID = coll.CollectionID
-                    WHERE (ccm.ResourceID = $resourceid) order by coll.Name"
+ccm.CollectionID, coll.Name AS CollectionName, coll.Comment
+FROM v_ClientCollectionMembers AS ccm INNER JOIN
+v_Collection AS coll ON ccm.CollectionID = coll.CollectionID
+WHERE (ccm.ResourceID = $resourceid) order by coll.Name"
                     $dataset = @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query $qcoll |
                         Where-Object {$_.ResourceID -eq $resourceid})
                     $dataset | Out-UDGridData
@@ -160,6 +160,12 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
                     $dataset | Out-UDGridData
                 }
             }
+            <#
+            New-UDSideNavItem -Text "Processes" -Url "processes" -Icon tachometer
+            New-UDSideNavItem -Text "Services" -PageName "services" -Icon tachometer
+            New-UDSideNavItem -Text "System Event Log" -PageName "syseventlog" -Icon tachometer
+            New-UDSideNavItem -Text "App Event Log" -PageName "appeventlog" -Icon tachometer
+            #>
         } # switch
     } # row
 }

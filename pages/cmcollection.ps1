@@ -8,10 +8,6 @@ New-UDPage -Url "/cmcollection/:collid/:tabnum" -Endpoint {
         '6' { $qname = "cmcollvariables.sql" }
         default { $qname = "cmcollection.sql" }
     }
-    $SiteHost = $Cache:ConnectionInfo.Server
-    $Database = $Cache:ConnectionInfo.CmDatabase
-    $BasePath = $Cache:ConnectionInfo.QfilePath
-    $qfile = Join-Path $BasePath $qname
     New-UDRow {
         New-UDButton -Id 'b1' -Text "General" -OnClick { Invoke-UDRedirect -Url "/cmcollection/$collid/1" } -Flat
         New-UDButton -Id 'b2' -Text "Members" -OnClick { Invoke-UDRedirect -Url "/cmcollection/$collid/2" } -Flat
@@ -24,8 +20,7 @@ New-UDPage -Url "/cmcollection/:collid/:tabnum" -Endpoint {
         switch ($tabnum) {
             '1' {
                 New-UDTable -Title "General" -Headers @("Property","Value") -Endpoint {
-                    $cdata = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile -EnableException |
-                        Where-Object {$_.SiteID -eq $collid}
+                    $cdata = Get-CmwtDbQuery -QueryName $qname | Where-Object {$_.SiteID -eq $collid}
                     $Data = @(
                         [pscustomobject]@{ property = "Name"; value = [string]$cdata.Name }
                         [pscustomobject]@{ property = "CollectionID"; value = [string]$cdata.CollectionID }
@@ -46,7 +41,7 @@ New-UDPage -Url "/cmcollection/:collid/:tabnum" -Endpoint {
             }
             '2' {
                 New-UDGrid -Title "Collection Members" -Endpoint {
-                    Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile -EnableException |
+                    Get-CmwtDbQuery -QueryName $qname |
                         Where-Object {$_.CollectionID -eq $collid} | Foreach-Object {
                             $resid   = [string]$_.ResourceID
                             $name    = [string]$_.ComputerName
@@ -71,10 +66,8 @@ New-UDPage -Url "/cmcollection/:collid/:tabnum" -Endpoint {
             }
             '3' {
                 New-UDGrid -Title "Collection Query Rules" -Endpoint {
-                    $dataset = $null
-                    $dataset = @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
-                        Where-Object {($null -ne $_.RuleName) -and ($_.CollectionID -eq $collid)})
-                    $dataset | Foreach-Object {
+                    Get-CmwtDbQuery -QueryName $qname |
+                        Where-Object {($null -ne $_.RuleName) -and ($_.CollectionID -eq $collid)} | Foreach-Object {
                         [pscustomobject]@{
                             CollectionID   = [string]$_.CollectionID
                             CollectionName = [string]$_.CollectionName
@@ -89,7 +82,7 @@ New-UDPage -Url "/cmcollection/:collid/:tabnum" -Endpoint {
             '5' {}
             '6' {
                 New-UDGrid -Title "Collection Variables" -Endpoint {
-                    @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile -EnableException |
+                    @(Get-CmwtDbQuery -QueryName $qname |
                         Where-Object {$_.CollectionID -eq $collid} |
                             Select-Object VariableName,Value,Masked) | Out-UDGridData
                 }
