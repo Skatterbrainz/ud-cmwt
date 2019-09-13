@@ -249,7 +249,7 @@ function Start-UDCmwtDashboard {
         [parameter(HelpMessage="ConfigMgr Site Code")] [string] $SiteCode = "",
         [parameter(HelpMessage="AzureAD Credentials")] [pscredential] $Credential,
         [parameter(HelpMessage="Local Port for CMWT")] [int] $Port = 8081,
-        [paramter(HelpMessage="Stop and restart dashboards if running")] [switch] $Restart
+        [parameter(HelpMessage="Stop and restart dashboards if running")] [switch] $Restart
     )
     if ($Restart) {
         Write-Verbose "terminating cmwt dashboard sessions"
