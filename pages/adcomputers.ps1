@@ -3,6 +3,7 @@
         Get-ADSIComputer | Foreach-Object {
             $llogon = $_.LastLogon
             #$lpwd   = $_.LastPasswordSet
+            $name = [string]$_.Name
             if (![string]::IsNullOrEmpty($llogon)) {
                 $lldays = (New-TimeSpan -Start $([datetime]$llogon) -End $(Get-Date)).Days
             }
@@ -11,7 +12,7 @@
             }
             #$lpdays = (New-TimeSpan -Start $lpwd -End (Get-Date)).Days
             [pscustomobject]@{
-                Name        = [string]$_.Name
+                Name        = New-UDElement -Tag "a" -Attributes @{ href="/adcomputer/$name"} -Content { $name }
                 Enabled     = $_.Enabled
                 Description = [string]$_.Description
                 LastLogon   = $llogon

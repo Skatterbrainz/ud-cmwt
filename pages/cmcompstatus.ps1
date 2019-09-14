@@ -1,10 +1,6 @@
-New-UDPage -Name "cmcompstatus" -Id 'cmcompstatus' -Content {
+New-UDPage -Name "cmcompstatus" -Content {
 	New-UDGrid -Title "Configuration Manager Component Status" -Endpoint {
-        $qname    = "cmcompstatus.sql"
-        $SiteHost = $Cache:ConnectionInfo.Server
-        $Database = $Cache:ConnectionInfo.CmDatabase
-        $qfile    = Join-Path $Cache:ConnectionInfo.QfilePath $qname
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+        Get-CmwtDbQuery -QueryName "cmcompstatus" |
             Select-Object ComponentName,Status,State,Info,Warning,Error,LastContacted |
                 Out-UDGridData
     }

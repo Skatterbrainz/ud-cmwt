@@ -1,13 +1,11 @@
-﻿New-UDPage -Name "cmdevices" -Id 'cmdevices' -Content {
+﻿New-UDPage -Name "cmdevices" -Content {
 	New-UDGrid -Title "Configuration Manager Devices" -Endpoint {
-        $qname    = "cmdevices.sql"
-        $SiteHost = $Cache:ConnectionInfo.Server
-        $Database = $Cache:ConnectionInfo.CmDatabase
-		$BasePath = $Cache:ConnectionInfo.QfilePath
-		$qfile    = Join-Path $BasePath $qname
-        Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile | Foreach-Object {
+        Get-CmwtDbQuery -QueryName "cmdevices" | Foreach-Object {
+            $resid = [string]$_.ResourceID
+            $name  = [string]$_.Name
             [pscustomobject]@{
-                Name    = [string]$_.Name
+                Name    = New-UDElement -Tag "a" -Attributes @{ href="/cmdevice/$resid/general" } -Content { $name }
+                ResourceID = $resid
                 OSName  = [string]$_.OSName
                 OSBuild = [string]$_.OSBuild
                 Client  = [string]$_.ClientVersion
