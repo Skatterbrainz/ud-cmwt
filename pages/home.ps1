@@ -1,6 +1,7 @@
 ﻿New-UDPage -Name "Home" -Icon home -DefaultHomePage -Content {
     New-UDRow -Columns {
         New-UDColumn -Content {
+            New-UDCard -id 'search' -Text "ConfigMgr Search" -Links @( New-UDLink -Url '/cmsearch' -Text "Search" )
             New-UDCard -Image (New-UDImage -Path $(Join-Path (Split-Path $PSScriptRoot) 'assets/splash1.png') -Height 250) -Links @(New-UDLink -Url "./cmsitestatus" -Text "$SiteCode Site Status")
         }
         New-UDColumn -Content {
