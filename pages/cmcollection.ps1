@@ -54,7 +54,7 @@ New-UDPage -Url "/cmcollection/:collid/:tabnum" -Endpoint {
                             $oblink  = New-UDElement -Tag "a" -Attributes @{ href="/cmfind/device/osbuild/$osbuild" } -Content { $osbuild }
                             $mdlink  = New-UDElement -Tag "a" -Attributes @{ href="/cmfind/device/model/$model" } -Content { $model }
                             [pscustomobject]@{
-                                Name          = New-UDElement -Tag "a" -Attributes @{ href="/cmdevice/$resid/1" } -Content { $name }
+                                Name          = New-UDElement -Tag "a" -Attributes @{ href="/cmdevice/$resid/general" } -Content { $name }
                                 ClientVersion = [string]$_.ClientVersion
                                 Model         = $mdlink
                                 OSName        = $oslink

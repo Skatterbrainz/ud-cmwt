@@ -1,39 +1,43 @@
-New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
-    param ([string]$resourceid, [int]$tabnum = 1)
-    switch ($tabnum) {
-        1 { $qname = "cmdevice.sql" }
-        2 { $qname = "cmdevicehw.sql" }
-        3 { $qname = "cmdevicesw.sql" }
-        4 { $qname = "cmdevicecolls.sql" }
-        5 { $qname = "cmclienthealthsummary.sql" }
-        default { $qname = "cmdevice.sql" }
-    }
-    $SiteHost = $Cache:ConnectionInfo.Server
-    $Database = $Cache:ConnectionInfo.CmDatabase
-    $BasePath = $Cache:ConnectionInfo.QfilePath
-    $compdata = @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File (Join-Path $BasePath "cmdevicename.sql") |
-        Where-Object {$_.ResourceID -eq $resourceid} )
+New-UDPage -Url "/cmdevice/:resourceid/:propname" -Endpoint {
+    param ($resourceid, $propname = "general")
+
+    $compdata = @(Get-CmwtDbQuery -QueryName "cmdevicename" | Where-Object {$_.ResourceID -eq $resourceid} )
     if ($compdata.Count -gt 0) {
         $compname = [string]$compdata[0].ComputerName
     }
     else {
         $compname = "Unknown"
     }
+
     New-UDRow {
-        New-UDButton -Id 'b1' -Text "General" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/1" } -Flat
-        New-UDButton -Id 'b2' -Text "Hardware" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/2" } -Flat
-        New-UDButton -Id 'b3' -Text "Software" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/3" } -Flat
-        New-UDButton -Id 'b4' -Text "Collections" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/4" } -Flat
-        New-UDButton -Id 'b5' -Text "Client Status" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/5" } -Flat
-        New-UDButton -Id 'b6' -Text "Networking" -OnClick { Invoke-UDRedirect -Url "cmdevice/$resourceid/6" } -Flat
+        New-UDColumn -Endpoint {
+            $proplist = @("General","Hardware","Processors","Disks","Networking","Software","Processes","Services","SysEvents","AppEvents","Collections","ClientStatus")
+            $bx = 1
+            foreach($prop in $proplist) {
+                $url = "cmdevice/$resourceid/$prop"
+                New-UDButton -Id "b$bx" -Text $prop -OnClick { Invoke-UDRedirect -Url $url } -Flat
+                $bx++
+            }
+        }
     }
+    <#
     New-UDRow {
-        switch ($tabnum) {
-            1 {
+        New-UDInput -Title "" -Id 'form1' -Content {
+            [string[]]$proplist = @("General","Hardware","Processors","Disks","Networking","Software","Processes","Services","SysEvents","AppEvents","Collections","ClientStatus")
+            $defitem = $propname
+            New-UDInputField -Type 'select' -Name 'prop' -Placeholder 'Property Group' -DefaultValue $defitem -Values $proplist
+        } -Endpoint {
+            param($prop)
+            [string]$url = "cmdevice/$resourceid/$prop"
+            Invoke-UDRedirect -Url $url
+        }
+    }
+    #>
+    New-UDRow {
+        switch ($propname) {
+            "general" {
                 New-UDTable -Title "$compname - General" -Headers @("Property","Value") -Endpoint {
-                    $qfile = Join-Path $BasePath "cmdevice.sql"
-                    $cdata = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
-                        Where-Object {$_.ResourceID -eq $resourceid} | Select-Object -First 1
+                    $cdata = Get-CmwtDbQuery -QueryName "cmdevice" | Where-Object {$_.ResourceID -eq $resourceid} | Select-Object -First 1
                     $mfr     = $cdata.Manufacturer
                     $model   = $cdata.Model
                     $osname  = $cdata.OSName
@@ -67,57 +71,57 @@ New-UDPage -Url "/cmdevice/:resourceid/:tabnum" -Endpoint {
                     $Data | Out-UDTableData -Property @("Property", "Value")
                 }
             }
-            2 {
+            "hardware" {
                 # hardware inventory
-                #$cs = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query "select * from v_GS_COMPUTER_SYSTEM where resourceid=$resid"
-                New-UDGrid -Title "$compname - Hardware" -Endpoint {
-                    $qfile = ""
+                New-UDTable -Title "$compname - Client Status" -Headers @("Property","Value") -Endpoint {
+                    $cdata = Get-CmwtDbQuery -QueryText "select Name0 as Name,Manufacturer0 as Manufacturer,Model0 as Model from v_GS_COMPUTER_SYSTEM where resourceid=$resourceid"
+                    $Data = @(
+                        [pscustomobject]@{ property = "Name"; value = [string]$cdata.Name }
+                        [pscustomobject]@{ property = "Manufacturer"; value = [string]$cdata.Manufacturer }
+                        [pscustomobject]@{ property = "Model"; value = [string]$cdata.Model }
+                    )
+                    $Data | Out-UDTableData -Property @("Property","Value")
                 }
-                New-UDGrid -Title "$compname - Logical Disks" -Endpoint {
-                    $qfile = Join-Path $BasePath "cmlogicaldisks.sql"
-                    $dataset = $null
-                    $dataset = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
-                        Where-Object {$_.ResourceID -eq $resourceid} |
-                            Select-Object Drive,Label,Description,Size,FreeSpace,Used,FileSystem,SerialNum
-                    $dataset | Out-UDGridData
-                }
+            }
+            "processors" {
                 New-UDGrid -Title "$compname - Processors" -Endpoint {
-                    $qfile = Join-Path $BasePath "cmprocessors.sql"
-                    $dataset = $null
-                    $dataset = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+                    $dataset = Get-CmwtDbQuery -QueryName "cmprocessors" |
                         Where-Object {$_.ResourceID -eq $resourceid} |
                             Select-Object Name,Manufacturer,Bits,MaxClock,Cores,LogicalProcs,VMCapable
                     $dataset | Out-UDGridData
                 }
             }
-            3 {
+            "disks" {
+                New-UDGrid -Title "$compname - Logical Disks" -Endpoint {
+                    $dataset = Get-CmwtDbQuery -QueryName "cmlogicaldisks" |
+                        Where-Object {$_.ResourceID -eq $resourceid} |
+                            Select-Object Drive,Label,Description,Size,FreeSpace,Used,FileSystem,SerialNum
+                    $dataset | Out-UDGridData
+                }
+            }
+            "software" {
                 # software inventory
                 New-UDGrid -Title "$compname - Installed Software" -Endpoint {
-                    $qfile = Join-Path $BasePath "cmarpinstalls.sql"
-                    $dataset = $null
-                    $dataset = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+                    $dataset = Get-CmwtDbQuery -QueryName "cmarpinstalls" |
                         Where-Object {$_.ResourceID -eq $resourceid} |
                             Select-Object ProductName,Publisher,Version,ProductCode,Platform
                     $dataset | Out-UDGridData
                 }
             }
-            4 {
+            "collections" {
                 New-UDGrid -Title "$compname - Collections" -Endpoint {
-                    $dataset = $null
                     $qcoll = "SELECT DISTINCT
 ccm.CollectionID, coll.Name AS CollectionName, coll.Comment
 FROM v_ClientCollectionMembers AS ccm INNER JOIN
 v_Collection AS coll ON ccm.CollectionID = coll.CollectionID
 WHERE (ccm.ResourceID = $resourceid) order by coll.Name"
-                    $dataset = @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -Query $qcoll |
-                        Where-Object {$_.ResourceID -eq $resourceid})
+                    $dataset = @(Get-CmwtDbQuery -QueryText $qcoll | Where-Object {$_.ResourceID -eq $resourceid})
                     $dataset | Out-UDGridData
                 }
             }
-            5 {
+            "clientstatus" {
                 New-UDTable -Title "$compname - Client Status" -Headers @("Property","Value") -Endpoint {
-                    $qfile = Join-Path $BasePath "cmclienthealthsummary.sql"
-                    $cdata = Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+                    $cdata = Get-CmwtDbQuery -QueryName "cmclienthealthsummary" |
                         Where-Object {$_.ResourceID -eq $resourceid} | Select-Object -First 1
                     $lasthw  = "$([string]$cdata.LastHW) ($([int]$cdata.HwInvAge) days ago)"
                     $lastsw  = "$([string]$cdata.LastSW) ($([int]$cdata.SwInvAge) days ago)"
@@ -150,22 +154,47 @@ WHERE (ccm.ResourceID = $resourceid) order by coll.Name"
                     $Data | Out-UDTableData -Property ("Property","Value")
                 }
             }
-            6 {
+            "networking" {
                 New-UDGrid -Title "$compname - Network Adapters" -Endpoint {
-                    $qfile = Join-Path $BasePath "cmnetadapters.sql"
-                    $dataset = $null
-                    $dataset = @(Invoke-DbaQuery -SqlInstance $SiteHost -Database $Database -File $qfile |
+                    $dataset = @(Get-CmwtDbQuery -QueryName "cmnetadapters" |
                         Where-Object {$_.ResourceID -eq $resourceid} |
                             Select-Object IPAddress,MAC,Mask,Gateway,DHCPEnabled,DNSDomain,DHCPServer)
                     $dataset | Out-UDGridData
                 }
             }
-            <#
-            New-UDSideNavItem -Text "Processes" -Url "processes" -Icon tachometer
-            New-UDSideNavItem -Text "Services" -PageName "services" -Icon tachometer
-            New-UDSideNavItem -Text "System Event Log" -PageName "syseventlog" -Icon tachometer
-            New-UDSideNavItem -Text "App Event Log" -PageName "appeventlog" -Icon tachometer
-            #>
+            "processes" {
+                New-UDGrid -Title "$compname - Processes" -Endpoint {
+                    Get-Process -ComputerName $compname |
+                        Select-Object ProcessName,Id,Path | Out-UDGridData
+                }
+            }
+            "services" {
+                New-UDGrid -Title "$compname - Services" -Endpoint {
+                    Get-Service -ComputerName $compname | ForEach-Object {
+                        [pscustomobject]@{
+                            DisplayName = [string]$_.DisplayName
+                            ServiceName = [string]$_.ServiceName
+                            StartType   = [string]$_.StartType
+                            Status      = [string]$_.Status
+                        }
+                    } | Out-UDGridData
+                }
+            }
+            "sysevents" {
+                New-UDGrid -Title "$compname - System Event Log" -Endpoint {
+                    Get-WinEvent -Force -ComputerName $compname -LogName System -MaxEvents 50 -ErrorAction SilentlyContinue |
+                        Select-Object TimeCreated,ID,ProviderName,Message | Out-UDGridData
+                }
+            }
+            "appevents" {
+                New-UDGrid -Title "$compname - Application Event Log" -Endpoint {
+                    Get-WinEvent -Force -ComputerName $compname -LogName Application -MaxEvents 50 -ErrorAction SilentlyContinue |
+                        Select-Object TimeCreated,ID,ProviderName,Message | Out-UDGridData
+                }
+            }
+            default {
+                New-UDCard -Title "$compname - VOID" -Content {"Invalid Property: $propname"}
+            }
         } # switch
     } # row
 }
